@@ -589,7 +589,7 @@ void NeuralNetwork::FlushCube()
             for (unsigned int k = 0; k < m_neurons.size(); k++)
                 m_neurons[k].m_sensitivity_matrix[i][j] = 0;
 }
-void NeuralNetwork::Input(std::vector<double>& a_Inputs)
+void NeuralNetwork::Input(const std::vector<double>& a_Inputs)
 {
 	unsigned mx = a_Inputs.size();
 	if (mx > m_num_inputs)
@@ -650,7 +650,7 @@ void NeuralNetwork::Input_numpy(const pyndarray& a_Inputs)
 std::vector<double> NeuralNetwork::Output()
 {
     std::vector<double> t_output;
-    for (int i = 0; i < m_num_outputs; i++)
+    for (unsigned int i = 0; i < m_num_outputs; i++)
     {
         t_output.push_back(m_neurons[i + m_num_inputs].m_activation);
     }
@@ -948,4 +948,4 @@ bool NeuralNetwork::Load(const char *a_filename)
 }
 
 
-}; // namespace NEAT
+} // namespace NEAT

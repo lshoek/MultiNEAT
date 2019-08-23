@@ -165,7 +165,7 @@ public:
     void Flush();     // clears all activations
     void FlushCube(); // clears the sensitivity cube
 
-    void Input(std::vector<double>& a_Inputs);
+    void Input(const std::vector<double>& a_Inputs);
 
 #ifdef USE_BOOST_PYTHON
 
@@ -234,7 +234,7 @@ public:
     bool Load(std::ifstream& a_DataFile);
 };
 
-}; // namespace NEAT
+} // namespace NEAT
 
 
 

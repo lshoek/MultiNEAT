@@ -41,6 +41,7 @@
 #endif
 
 #include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -149,8 +150,8 @@ namespace NEAT
         bool m_Evaluated;
 
         // the initial genome complexity
-        int m_initial_num_neurons;
-        int m_initial_num_links;
+        unsigned int m_initial_num_neurons;
+        unsigned int m_initial_num_links;
 
         // A pointer to a class representing the phenotype's behavior
         // Used in novelty searches
@@ -272,8 +273,6 @@ namespace NEAT
 
         bool FailsConstraints(const Parameters &a_Parameters)
         {
-            bool fails = false;
-
             if (HasDeadEnds() || (NumLinks() == 0))
             {
                 return true; // no reason to continue
@@ -334,7 +333,7 @@ namespace NEAT
                     if (tmap.count(tit->second.dep_key) != 0)
                     {
                         // and it has the right value?
-                        for(int ix=0; ix < tit->second.dep_values.size(); ix++)
+                        for(long unsigned int ix=0; ix < tit->second.dep_values.size(); ix++)
                         {
                             if (tmap[tit->second.dep_key].value == tit->second.dep_values[ix])
                             {
@@ -686,16 +685,17 @@ namespace NEAT
                 coord = coord_in;
             };
 
-            public void set_children()
+        public: void set_children()
             {
-                for(unsigned int ix = 0; ix < 2**coord.size(); ix++){
+                unsigned int ix_max = std::pow(2, coord.size());
+                for(unsigned int ix = 0; ix < ix_max; ix++){
                     std::string sum_permute = toBinary(ix, coord.size());
                     std::vector<double> child_coords;
-                    int child_param_len = sum_permute.length();
+                    unsigned int child_param_len = sum_permute.length();
                     child_coords.reserve(child_param_len);
                     for(unsigned int sign_ix = 0; sign_ix < child_param_len; sign_ix++)
                     {
-                        if(sum_permute[sign_ix] == "0")
+                        if(sum_permute[sign_ix] == '0')
                         {
                             child_coords.push_back(coord[sign_ix] + width/2.0);
                         }
@@ -703,12 +703,14 @@ namespace NEAT
                         {
                             child_coords.push_back(coord[sign_ix] - width/2.0);
                         }
-                        children.push_back(new nTree(child_coords, width/2.0, sslvl+1));
+                        children.push_back(
+                                boost::make_shared<nTree>(child_coords, width/2.0, lvl+1)
+                        );
                     }
                 }
             }
 
-            string toBinary(unsigned int n, int min_len)
+            string toBinary(unsigned int n, unsigned int min_len)
             {
                 std::string r;
                 while(n!=0)
@@ -719,7 +721,7 @@ namespace NEAT
                 if(r.length() < min_len)
                 {
                     int diff = min_len - r.length();
-                    for(unsigned int x = 0; x < diff; x++)
+                    for(int x = 0; x < diff; x++)
                     {
                         r = '0' +r;
                     }
@@ -727,7 +729,7 @@ namespace NEAT
                 return r;
             }
         };
-        void BuildESHyperNEATPhenotypeND(NeuralNetwork &a_net, Substrate &subst, Parameters &params);
+//        void BuildESHyperNEATPhenotypeND(NeuralNetwork &a_net, Substrate &subst, Parameters &params);
         void BuildESHyperNEATPhenotype(NeuralNetwork &a_net, Substrate &subst, Parameters &params);
 
         void DivideInitialize(const std::vector<double> &node,
@@ -739,15 +741,15 @@ namespace NEAT
                           boost::shared_ptr<QuadPoint> &root, NeuralNetwork &cppn,
                           Parameters &params, std::vector<Genome::TempConnection> &connections,
                           const bool &outgoing);
-        void DivideInitializeND(const std::vector<double> &node,
-                              boost::shared_ptr<nTree> &root,
-                              NeuralNetwork &cppn, Parameters &params,
-                              const bool &outgoing, const double &z_coord);
+//        void DivideInitializeND(const std::vector<double> &node,
+//                              boost::shared_ptr<nTree> &root,
+//                              NeuralNetwork &cppn, Parameters &params,
+//                              const bool &outgoing, const double &z_coord);
 
-        void PruneExpressND(const std::vector<double> &node,
-                          boost::shared_ptr<nTree> &root, NeuralNetwork &cppn,
-                          Parameters &params, std::vector<Genome::TempConnection> &connections,
-                          const bool &outgoing);
+//        void PruneExpressND(const std::vector<double> &node,
+//                          boost::shared_ptr<nTree> &root, NeuralNetwork &cppn,
+//                          Parameters &params, std::vector<Genome::TempConnection> &connections,
+//                          const bool &outgoing);
 
 
         void CollectValues(std::vector<double> &vals, boost::shared_ptr<QuadPoint> &point);

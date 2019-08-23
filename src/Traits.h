@@ -126,12 +126,12 @@ namespace NEAT
         // keep dep_key empty and no conditional logic will apply
 
         TraitParameters()
+            : m_ImportanceCoeff(0)
+            , m_MutationProb(0)
+            , type("int")
+            , m_Details(IntTraitParameters())
+            , dep_key("")
         {
-            m_ImportanceCoeff = 0;
-            m_MutationProb = 0;
-            type = "int";
-            m_Details = IntTraitParameters();
-            dep_key = "";
             dep_values.push_back( std::string("") );
         }
     };

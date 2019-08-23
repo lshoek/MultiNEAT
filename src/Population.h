@@ -189,7 +189,7 @@ public:
     double GetBestFitnessEver() const { return m_BestFitnessEver; }
     Genome GetBestGenome() const
     {
-        double best = std::numeric_limits<double>::min();
+        double best = -std::numeric_limits<double>::infinity();
         int idx_species = 0;
         int idx_genome = 0;
         for(unsigned int i=0; i<m_Species.size(); i++)

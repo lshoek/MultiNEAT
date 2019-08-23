@@ -58,7 +58,7 @@ public:
         return false;
     }
 
-    // Overload this method to calcluate distance between behaviors
+    // Overload this method to calculate distance between behaviors
     virtual double Distance_To(PhenotypeBehavior* a_Other)
     {
         //ASSERT(false);
@@ -73,13 +73,13 @@ public:
         return true;
     }
     
-    // comparison operator (nessesary for boost::python)
+    // comparison operator (necessary for boost::python)
     // todo: implement a better comparison technique
     bool operator==(PhenotypeBehavior const& other) const { return m_Data == other.m_Data; }
 };
 
 
-};
+}
 
 
 

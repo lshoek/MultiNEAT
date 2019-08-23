@@ -1,4 +1,5 @@
 build/
+cmake-build-*/
 datadump/*
 *.test
 *.csv
@@ -18,6 +19,10 @@ _MultiNEAT.cpp
 __pycache__/
 *.py[cod]
 *$py.class
+
+# virtual environments
+/.venv/
+/venv/
 
 # Distribution / packaging
 .Python

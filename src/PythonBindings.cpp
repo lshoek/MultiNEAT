@@ -61,7 +61,7 @@ using namespace py;
     typedef typename numpy::ndarray pyndarray;
 #endif
 
-BOOST_PYTHON_MODULE(_MultiNEAT)
+BOOST_PYTHON_MODULE(multineat_python)
 {
     Py_Initialize();
 
@@ -602,7 +602,7 @@ BOOST_PYTHON_MODULE(_MultiNEAT)
     class_< std::vector<PhenotypeBehavior> >("PhenotypeBehaviorList")
             .def(vector_indexing_suite< std::vector<PhenotypeBehavior> >() )
             ;
-};
+}
 
 namespace boost
 {

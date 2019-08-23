@@ -156,7 +156,7 @@ namespace NEAT
 
             //int t_num_parents = static_cast<int>( floor(
             //        (a_Parameters.SurvivalRate * (static_cast<double>(t_Evaluated.size()))) + 1.0));
-            int t_num_parents = (int)(a_Parameters.SurvivalRate * (double)(t_Evaluated.size()));
+            long unsigned int t_num_parents = (int)(a_Parameters.SurvivalRate * (double)(t_Evaluated.size()));
     
             ASSERT(t_num_parents > 0);
             ASSERT(t_num_parents < t_Evaluated.size());

@@ -50,7 +50,7 @@ Population::Population(const Genome& a_Seed, const Parameters& a_Parameters,
 		               bool a_RandomizeWeights, double a_RandomizationRange, int a_RNG_seed)
 {
     m_RNG.Seed(a_RNG_seed);
-    m_BestFitnessEver = 0.0;
+    m_BestFitnessEver = -std::numeric_limits<double>::infinity();
     m_Parameters = a_Parameters;
 
     m_Generation = 0;
@@ -147,7 +147,7 @@ Population::Population(const Genome& a_Seed, const Parameters& a_Parameters,
 
 Population::Population(const char *a_FileName)
 {
-    m_BestFitnessEver = 0.0;
+    m_BestFitnessEver = -std::numeric_limits<double>::infinity();
 
     m_Generation = 0;
     m_NumEvaluations = 0;

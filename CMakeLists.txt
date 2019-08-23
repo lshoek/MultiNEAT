@@ -1,57 +1,127 @@
 cmake_minimum_required(VERSION 3.3)
 project(MultiNEAT)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set (CMAKE_CXX_STANDARD 11)
 
-find_package(PythonLibs REQUIRED)
-include(FindPythonLibs)
+set (MultiNEAT_SRC_DIR ${CMAKE_SOURCE_DIR}/src)
+
+find_package(Threads REQUIRED)
+
+find_package(Boost
+        COMPONENTS
+        date_time
+        system
+        filesystem
+        serialization
+        REQUIRED
+        )
+
+set(SOURCE_FILES
+        src/Genome.cpp
+        src/Innovation.cpp
+        src/NeuralNetwork.cpp
+        src/Parameters.cpp
+        src/Population.cpp
+        src/Random.cpp
+        src/Species.cpp
+        src/Substrate.cpp
+        src/Utils.cpp
+        src/Traits.cpp)
+
+
+add_library(MultiNEAT STATIC ${SOURCE_FILES})
 
 set(Boost_USE_STATIC_LIBS       OFF) # only find static libs
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
-find_package(Boost COMPONENTS
-    date_time
-    system
-    filesystem
-    python3
-    serialization)
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
+
+target_include_directories(MultiNEAT
+        PRIVATE
+        ${Boost_INCLUDE_DIRS}
+        PUBLIC
+        $<INSTALL_INTERFACE:${MultiNEAT_SRC_DIR}/include>
+        )
+
+target_link_libraries(MultiNEAT
+        PUBLIC
+        Boost::date_time
+        Boost::system
+        Boost::filesystem
+        Boost::serialization
+        Threads::Threads
+        )
+
+target_compile_definitions(MultiNEAT
+        PUBLIC
+        USE_BOOST_RANDOM
+        )
+
+add_executable(MultiNEAT_Test
+        src/Main.cpp
+        )
+
+target_link_libraries(MultiNEAT_Test
+        MultiNEAT
+        $<$<BOOL:${WIN32}>:ws2_32>
+        )
+
+if(GENERATE_PYTHON_BINDINGS)
+    find_package(Python3
+        COMPONENTS
+            Development
+        REQUIRED
+    )
+
+    message("found python ${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}.${Python3_VERSION_PATCH}")
+
+    set(3 ${Python3_VERSION_MAJOR})
+    set(3x "${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}")
+    set(PY3x "-py${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}") # ubuntu version
+
+    Python3_add_library(multineat_python
+            MODULE
+            ${SOURCE_FILES}
+            src/PythonBindings.cpp
+            )
+
+    target_compile_definitions(multineat_python
+            PUBLIC
+            USE_BOOST_RANDOM
+            USE_BOOST_PYTHON
+            )
+
+
+    find_package(Boost COMPONENTS
+            python${3}
+            python${3x}
+            python${PY3x}
+            numpy${3}
+            numpy${3x}
+            numpy${PY3x}
+            QUIET
+            )
+
+    target_include_directories(multineat_python
+            PRIVATE
+            ${Boost_INCLUDE_DIRS}
+            PUBLIC
+            $<INSTALL_INTERFACE:${MultiNEAT_SRC_DIR}/include>
+            )
+
+    target_link_libraries(multineat_python
+            PUBLIC
+            PUBLIC
+            Boost::date_time
+            Boost::system
+            Boost::filesystem
+            Boost::serialization
+            # Python3::Python # already included by default
+            $<$<BOOL:${Boost_PYTHON${3}_FOUND}>:${Boost_PYTHON${3}_LIBRARY}>
+            $<$<BOOL:${Boost_PYTHON${3x}_FOUND}>:${Boost_PYTHON${3x}_LIBRARY}>
+            $<$<BOOL:${Boost_PYTHON${PY3x}_FOUND}>:${Boost_PYTHON${PY3x}_LIBRARY}>
+            $<$<BOOL:${Boost_NUMPY${3}_FOUND}>:${Boost_NUMPY${3}_LIBRARY}>
+            $<$<BOOL:${Boost_NUMPY${3x}_FOUND}>:${Boost_NUMPY${3x}_LIBRARY}>
+            $<$<BOOL:${Boost_NUMPY${PY3x}_FOUND}>:${Boost_NUMPY${PY3x}_LIBRARY}>
+            )
+
 endif()
-
-include_directories(${PYTHON_INCLUDE_DIRS})
-
-add_definitions(-DUSE_BOOST_PYTHON)
-add_definitions(-DUSE_BOOST_RANDOM)
-
-set(SOURCE_FILES
-    src/Assert.h
-    src/Genes.h
-    src/Genome.cpp
-    src/Genome.h
-    src/Innovation.cpp
-    src/Innovation.h
-    src/Main.cpp
-    src/NeuralNetwork.cpp
-    src/NeuralNetwork.h
-    src/Parameters.cpp
-    src/Parameters.h
-    src/PhenotypeBehavior.cpp
-    src/PhenotypeBehavior.h
-    src/Population.cpp
-    src/Population.h
-    src/PythonBindings.cpp
-    src/Random.cpp
-    src/Random.h
-    src/Species.cpp
-    src/Species.h
-    src/Substrate.cpp
-    src/Substrate.h
-    src/Utils.cpp
-    src/Utils.h
-    src/Traits.h
-    src/Traits.cpp)
-
-
-add_executable(MultiNEAT ${SOURCE_FILES})
-target_link_libraries(MultiNEAT ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} pthread)

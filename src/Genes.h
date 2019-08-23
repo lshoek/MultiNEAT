@@ -270,7 +270,7 @@ namespace NEAT
                     if (m_Traits.count(it->second.dep_key) != 0)
                     {
                         // and it matches any of the right values?
-                        for(int ix=0; ix<it->second.dep_values.size();ix++)
+                        for(long unsigned int ix=0; ix<it->second.dep_values.size(); ix++)
                         {
                             if (m_Traits[it->second.dep_key].value == it->second.dep_values[ix])
                             {
@@ -429,7 +429,7 @@ namespace NEAT
                     {
                         // and it has the right value?
                         // also the other genome has to have the trait turned on
-                        for(int ix=0; ix<it->second.dep_values.size(); ix++)
+                        for(long unsigned int ix=0; ix<it->second.dep_values.size(); ix++)
                         {
                             if ((m_Traits[it->second.dep_key].value == it->second.dep_values[ix]) &&
                                 (other.at(it->second.dep_key).value == it->second.dep_values[ix]))

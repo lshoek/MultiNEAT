@@ -73,18 +73,22 @@ namespace NEAT
         // Keep an archive of genomes and don't allow any new genome to exist in the archive or the population
         ArchiveEnforcement = false;
     
-        // When true, don't have a special bias neuron and treat all inputs equal
-        DontUseBiasNeuron = false;
-    
-        // When false, this prevents any recurrent pathways in the genomes from forming
-        AllowLoops = true;
-    
         // Normalize genome size when calculating compatibility
         NormalizeGenomeSize = true;
     
         // Pointer to a function that specifies custom topology/trait constraints
         // Should return true if the genome FAILS to meet the constraints
         CustomConstraints = NULL;
+
+        /////////////////////////////
+        // Genome properties params
+        /////////////////////////////
+
+        // When true, don't have a special bias neuron and treat all inputs equal
+        DontUseBiasNeuron = false;
+
+        // When false, this prevents any recurrent pathways in the genomes from forming
+        AllowLoops = true;
         
         ////////////////////////////////
         // GA Parameters
@@ -222,6 +226,9 @@ namespace NEAT
 
         // Allow splitting of looped recurrent links
         SplitLoopedRecurrent = true;
+
+        // Maximum number of tries to find a link to split
+        NeuronTries = 64;
 
         // Probability for a baby to be mutated with the Add-Link mutation
         MutateAddLinkProb = 0.03;
@@ -421,6 +428,7 @@ namespace NEAT
 
         //////////////////////////////
         // ES-HyperNEAT parameters
+        //////////////////////////////
 
         DivisionThreshold = 0.03;
 
@@ -464,8 +472,155 @@ namespace NEAT
     }
 
     Parameters::Parameters()
+        // Basic parameters
+        : PopulationSize(300)
+        , DynamicCompatibility(true)
+        , MinSpecies(5)
+        , MaxSpecies(10)
+        , InnovationsForever(true)
+        , AllowClones(true)
+        , ArchiveEnforcement(false)
+        , NormalizeGenomeSize(true)
+        , CustomConstraints(nullptr)
+#ifdef USE_BOOST_PYTHON
+        // same as above, but for Python
+        , pyCustomConstraints()
+#endif
+        // Genome properties params
+        , DontUseBiasNeuron(false) //done
+        , AllowLoops(true) //done
+        // GA Parameters
+        , YoungAgeTreshold(5)
+        , YoungAgeFitnessBoost(1.1)
+        , SpeciesMaxStagnation(50)
+        , StagnationDelta(0.0)
+        , OldAgeTreshold(30)
+        , OldAgePenalty(0.5)
+        , DetectCompetetiveCoevolutionStagnation(false)
+        , KillWorstSpeciesEach(15)
+        , KillWorstAge(10)
+        , SurvivalRate(0.25)
+        , CrossoverRate(0.7)
+        , OverallMutationRate(0.25)
+        , InterspeciesCrossoverRate(0.0001)
+        , MultipointCrossoverRate(0.75)
+        , RouletteWheelSelection(false)
+        , TournamentSize(4)
+        , EliteFraction(0.01)
+        // Phased Search parameters
+        , PhasedSearching(false)
+        , DeltaCoding(false)
+        , SimplifyingPhaseMPCTreshold(20)
+        , SimplifyingPhaseStagnationTreshold(30)
+        , ComplexityFloorGenerations(40)
+        // Novelty Search parameters
+        , NoveltySearch_K(15)
+        , NoveltySearch_P_min(0.5)
+        , NoveltySearch_Dynamic_Pmin(true)
+        , NoveltySearch_No_Archiving_Stagnation_Treshold(150)
+        , NoveltySearch_Pmin_lowering_multiplier(0.9)
+        , NoveltySearch_Pmin_min(0.05)
+        , NoveltySearch_Quick_Archiving_Min_Evaluations(8)
+        , NoveltySearch_Pmin_raising_multiplier(1.1)
+        , NoveltySearch_Recompute_Sparseness_Each(25)
+        // Structural Mutation parameters
+        , MutateAddNeuronProb(0.01)
+        , SplitRecurrent(true)
+        , SplitLoopedRecurrent(true)
+        , NeuronTries(64)
+        , MutateAddLinkProb(0.03)
+        , MutateAddLinkFromBiasProb(0.0)
+        , MutateRemLinkProb(0.0)
+        , MutateRemSimpleNeuronProb(0.0)
+        , LinkTries(32)
+        , RecurrentProb(0.25)
+        , RecurrentLoopProb(0.25)
+        // Parameter Mutation parameters
+        , MutateWeightsProb(0.90)
+        , MutateWeightsSevereProb(0.25)
+        , WeightMutationRate(1.0)
+        , WeightReplacementRate(0.2)
+        , WeightMutationMaxPower(1.0)
+        , WeightReplacementMaxPower(1.0)
+        , MaxWeight(8.0)
+        , MutateActivationAProb(0.0)
+        , MutateActivationBProb(0.0)
+        , ActivationAMutationMaxPower(0.0)
+        , ActivationBMutationMaxPower(0.0)
+        , TimeConstantMutationMaxPower(0.0)
+        , BiasMutationMaxPower(1.0) // = WeightMutationMaxPower
+        , MinActivationA(1.0)
+        , MaxActivationA(1.0)
+        , MinActivationB(0.0)
+        , MaxActivationB(0.0)
+        , MutateNeuronActivationTypeProb(0.0)
+        , ActivationFunction_SignedSigmoid_Prob(0.0)
+        , ActivationFunction_UnsignedSigmoid_Prob(1.0)
+        , ActivationFunction_Tanh_Prob(0.0)
+        , ActivationFunction_TanhCubic_Prob(0.0)
+        , ActivationFunction_SignedStep_Prob(0.0)
+        , ActivationFunction_UnsignedStep_Prob(0.0)
+        , ActivationFunction_SignedGauss_Prob(0.0)
+        , ActivationFunction_UnsignedGauss_Prob(0.0)
+        , ActivationFunction_Abs_Prob(0.0)
+        , ActivationFunction_SignedSine_Prob(0.0)
+        , ActivationFunction_UnsignedSine_Prob(0.0)
+        , ActivationFunction_Linear_Prob(0.0)
+        , ActivationFunction_Relu_Prob(0.0)
+        , ActivationFunction_Softplus_Prob(0.0)
+        , MutateNeuronTimeConstantsProb(0.0)
+        , MutateNeuronBiasesProb(0.0)
+        , MinNeuronTimeConstant(0.0)
+        , MaxNeuronTimeConstant(0.0)
+        , MinNeuronBias(0.0)
+        , MaxNeuronBias(0.0)
+        , MutateNeuronTraitsProb(1.0)
+        , MutateLinkTraitsProb(1.0)
+        , MutateGenomeTraitsProb(1.0)
+        // Speciation parameters
+        , DisjointCoeff(1.0)
+        , ExcessCoeff(1.0)
+        , ActivationADiffCoeff(0.0)
+        , ActivationBDiffCoeff(0.0)
+        , WeightDiffCoeff(0.5)
+        , TimeConstantDiffCoeff(0.0)
+        , BiasDiffCoeff(0.0)
+        , ActivationFunctionDiffCoeff(0.0)
+        , CompatTreshold(5.0)
+        , MinCompatTreshold(0.2)
+        , CompatTresholdModifier(0.3)
+        , CompatTreshChangeInterval_Generations(1)
+        , CompatTreshChangeInterval_Evaluations(10)
+        // ES-HyperNEAT parameters
+        , DivisionThreshold(0.03)
+        , VarianceThreshold(0.03)
+        , BandThreshold(0.3)
+        , InitialDepth(3)
+        , MaxDepth(3)
+        , IterationLevel(1)
+        , CPPN_Bias(1.0)
+        , Width(2.0)
+        , Height(2.0)
+        , Qtree_X(0.0)
+        , Qtree_Y(0.0)
+        , Leo(false)
+        , LeoThreshold(0.1)
+        , LeoSeed(false)
+        , GeometrySeed(false)
+        // Mutation parameters maps
+        , NeuronTraits(new std::map< std::string, TraitParameters >())
+        , LinkTraits(new std::map< std::string, TraitParameters >())
+        , GenomeTraits(new std::map< std::string, TraitParameters >())
+
     {
-        Reset();
+        //Reset();
+    }
+
+    Parameters::~Parameters()
+    {
+        delete GenomeTraits;
+        delete NeuronTraits;
+        delete LinkTraits;
     }
 
     int Parameters::Load(std::ifstream &a_DataFile)
