@@ -48,13 +48,6 @@ namespace NEAT
 // The Population class
 //////////////////////////////////////////////
 
-enum SearchMode
-{
-    COMPLEXIFYING,
-    SIMPLIFYING,
-    BLENDED
-};
-
 class Species;
 
 class Population

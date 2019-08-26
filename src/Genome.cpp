@@ -1472,6 +1472,170 @@ namespace NEAT
         return (NEAT::ActivationFunction) a_RNG.Roulette(t_probs);
     }
 
+    void Genome::Mutate(bool t_baby_is_clone, const SearchMode a_searchMode, InnovationDatabase &a_innov_database, const Parameters &a_Parameters, RNG &a_RNG)
+    {
+        // We will perform roulette wheel selection to choose the type of mutation and will mutate the baby
+        // This method guarantees that the baby will be mutated at least with one mutation
+        enum MutationTypes
+        {
+            ADD_NODE = 0, ADD_LINK, REMOVE_NODE, REMOVE_LINK, CHANGE_ACTIVATION_FUNCTION,
+            MUTATE_WEIGHTS, MUTATE_ACTIVATION_A, MUTATE_ACTIVATION_B, MUTATE_TIMECONSTS, MUTATE_BIASES,
+            MUTATE_NEURON_TRAITS, MUTATE_LINK_TRAITS, MUTATE_GENOME_TRAITS
+        };
+        std::vector<int> t_muts;
+        std::vector<double> t_mut_probs;
+    
+        // ADD_NODE;
+        t_mut_probs.push_back(a_Parameters.MutateAddNeuronProb);
+    
+        // ADD_LINK;
+        t_mut_probs.push_back(a_Parameters.MutateAddLinkProb);
+    
+        // REMOVE_NODE;
+        t_mut_probs.push_back(a_Parameters.MutateRemSimpleNeuronProb);
+    
+        // REMOVE_LINK;
+        t_mut_probs.push_back(a_Parameters.MutateRemLinkProb);
+    
+        // CHANGE_ACTIVATION_FUNCTION;
+        t_mut_probs.push_back(a_Parameters.MutateNeuronActivationTypeProb);
+    
+        // MUTATE_WEIGHTS;
+        t_mut_probs.push_back(a_Parameters.MutateWeightsProb);
+    
+        // MUTATE_ACTIVATION_A;
+        t_mut_probs.push_back(a_Parameters.MutateActivationAProb);
+    
+        // MUTATE_ACTIVATION_B;
+        t_mut_probs.push_back(a_Parameters.MutateActivationBProb);
+    
+        // MUTATE_TIMECONSTS;
+        t_mut_probs.push_back(a_Parameters.MutateNeuronTimeConstantsProb);
+    
+        // MUTATE_BIASES;
+        t_mut_probs.push_back(a_Parameters.MutateNeuronBiasesProb);
+    
+        // MUTATE_NEURON_TRAITS;
+        t_mut_probs.push_back( a_Parameters.MutateNeuronTraitsProb );
+    
+        // MUTATE_LINK_TRAITS;
+        t_mut_probs.push_back( a_Parameters.MutateLinkTraitsProb );
+    
+        // MUTATE_GENOME_TRAITS;
+        t_mut_probs.push_back( a_Parameters.MutateGenomeTraitsProb );
+    
+        // Special consideration for phased searching - do not allow certain mutations depending on the search mode
+        // also don't use additive mutations if we just want to get rid of the clones
+        if ((a_searchMode == SIMPLIFYING) || t_baby_is_clone)
+        {
+            t_mut_probs[ADD_NODE] = 0; // add node
+            t_mut_probs[ADD_LINK] = 0; // add link
+        }
+        if ((a_searchMode == COMPLEXIFYING) || t_baby_is_clone)
+        {
+            t_mut_probs[REMOVE_NODE] = 0; // rem node
+            t_mut_probs[REMOVE_LINK] = 0; // rem link
+        }
+    
+        bool t_mutation_success = false;
+    
+        // repeat until successful
+        while (t_mutation_success == false)
+        {
+            int ChosenMutation = a_RNG.Roulette(t_mut_probs);
+        
+            // Now mutate based on the choice
+            switch (ChosenMutation)
+            {
+                case ADD_NODE:
+                    t_mutation_success = this->Mutate_AddNeuron(a_innov_database, a_Parameters, a_RNG);
+                    break;
+            
+                case ADD_LINK:
+                    t_mutation_success = this->Mutate_AddLink(a_innov_database, a_Parameters, a_RNG);
+                    break;
+            
+                case REMOVE_NODE:
+                    t_mutation_success = this->Mutate_RemoveSimpleNeuron(a_innov_database, a_RNG);
+                    break;
+            
+                case REMOVE_LINK:
+                {
+                    // Keep doing this mutation until it is sure that the baby will not
+                    // end up having dead ends or no links
+                    Genome t_saved_baby = *this;
+                    bool t_no_links = false, t_has_dead_ends = false;
+                
+                    int t_tries = 128;
+                    do
+                    {
+                        t_tries--;
+                        if (t_tries <= 0)
+                        {
+                            t_saved_baby = *this;
+                            break; // give up
+                        }
+                    
+                        t_saved_baby = *this;
+                        t_mutation_success = t_saved_baby.Mutate_RemoveLink(a_RNG);
+                    
+                        t_no_links = t_has_dead_ends = false;
+                    
+                        if (t_saved_baby.NumLinks() == 0)
+                            t_no_links = true;
+                    
+                        t_has_dead_ends = t_saved_baby.HasDeadEnds();
+                    
+                    }
+                    while (t_no_links || t_has_dead_ends);
+
+                    *this = t_saved_baby;
+                }
+                    break;
+            
+                case CHANGE_ACTIVATION_FUNCTION:
+                    t_mutation_success = this->Mutate_NeuronActivation_Type(a_Parameters, a_RNG);
+                    break;
+            
+                case MUTATE_WEIGHTS:
+                    t_mutation_success = this->Mutate_LinkWeights(a_Parameters, a_RNG);
+                    break;
+            
+                case MUTATE_ACTIVATION_A:
+                    t_mutation_success = this->Mutate_NeuronActivations_A(a_Parameters, a_RNG);
+                    break;
+            
+                case MUTATE_ACTIVATION_B:
+                    t_mutation_success = this->Mutate_NeuronActivations_B(a_Parameters, a_RNG);
+                    break;
+            
+                case MUTATE_TIMECONSTS:
+                    t_mutation_success = this->Mutate_NeuronTimeConstants(a_Parameters, a_RNG);
+                    break;
+            
+                case MUTATE_BIASES:
+                    t_mutation_success = this->Mutate_NeuronBiases(a_Parameters, a_RNG);
+                    break;
+            
+                case MUTATE_NEURON_TRAITS:
+                    t_mutation_success = this->Mutate_NeuronTraits(a_Parameters, a_RNG);
+                    break;
+            
+                case MUTATE_LINK_TRAITS:
+                    t_mutation_success = this->Mutate_LinkTraits(a_Parameters, a_RNG);
+                    break;
+            
+                case MUTATE_GENOME_TRAITS:
+                    t_mutation_success = this->Mutate_GenomeTraits(a_Parameters, a_RNG);
+                    break;
+            
+                default:
+                    t_mutation_success = false;
+                    break;
+            }
+        }
+    }
+        
 
     // Adds a new neuron to the genome
     // returns true if succesful

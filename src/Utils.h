@@ -40,6 +40,13 @@
 #include "Assert.h"
 #include "Random.h"
 
+enum SearchMode
+{
+    COMPLEXIFYING,
+    SIMPLIFYING,
+    BLENDED
+};
+
 using namespace std;
 
 

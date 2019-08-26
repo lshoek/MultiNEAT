@@ -296,6 +296,9 @@ BOOST_PYTHON_MODULE(_multineat)
 
             .def("Save", Genome_Save)
 
+            .def("Mate", &Genome::Mate)
+            .def("Mutate", &Genome::Mutate)
+
             .def_pickle(Genome_pickle_suite())
             ;
 

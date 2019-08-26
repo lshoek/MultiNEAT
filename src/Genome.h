@@ -57,6 +57,7 @@
 #include "Assert.h"
 #include "PhenotypeBehavior.h"
 #include "Random.h"
+#include "Util.h"
 
 namespace NEAT
 {
@@ -476,6 +477,8 @@ namespace NEAT
         ////////////
         // Mutation
         ////////////
+
+        void Mutate(bool t_baby_is_clone, const SearchMode a_searchMode, InnovationDatabase &a_innov_database, const Parameters &a_Parameters, RNG &a_RNG);
 
         // Adds a new neuron to the genome
         // returns true if succesful
