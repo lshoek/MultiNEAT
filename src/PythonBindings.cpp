@@ -61,7 +61,7 @@ using namespace py;
     typedef typename numpy::ndarray pyndarray;
 #endif
 
-BOOST_PYTHON_MODULE(multineat_python)
+BOOST_PYTHON_MODULE(_multineat)
 {
     Py_Initialize();
 

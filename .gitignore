@@ -1,4 +1,5 @@
 build/
+_skbuild/
 cmake-build-*/
 datadump/*
 *.test
