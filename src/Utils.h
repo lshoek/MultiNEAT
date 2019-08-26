@@ -47,14 +47,12 @@ enum SearchMode
     BLENDED
 };
 
-using namespace std;
 
-
-inline void GetMaxMin(const vector<double>& a_Vals, double& a_Min, double& a_Max)
+inline void GetMaxMin(const std::vector<double>& a_Vals, double& a_Min, double& a_Max)
 {
     a_Max = std::numeric_limits<double>::min();
     a_Min = std::numeric_limits<double>::max();
-    for(vector<double>::const_iterator t_It = a_Vals.begin(); t_It != a_Vals.end(); ++t_It)
+    for(std::vector<double>::const_iterator t_It = a_Vals.begin(); t_It != a_Vals.end(); ++t_It)
     {
         const double t_CurrentVal = (*t_It);
         if (t_CurrentVal > a_Max) a_Max = t_CurrentVal;

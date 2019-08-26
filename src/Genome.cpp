@@ -3282,7 +3282,7 @@ namespace NEAT
 
         if (!a_DataFile)
         {
-            ostringstream tStream;
+            std::ostringstream tStream;
             tStream << "Genome file error!" << std::endl;
             throw std::runtime_error("Genome file error!");
         }

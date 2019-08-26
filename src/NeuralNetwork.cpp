@@ -854,7 +854,7 @@ bool NeuralNetwork::Load(std::ifstream& a_DataFile)
 
     if (!a_DataFile)
     {
-        ostringstream tStream;
+        std::ostringstream tStream;
         tStream << "NN file error!" << std::endl;
         //    throw NS::Exception(tStream.str());
     }
@@ -934,7 +934,7 @@ bool NeuralNetwork::Load(std::ifstream& a_DataFile)
 
     if (t_no_end)
     {
-        ostringstream tStream;
+        std::ostringstream tStream;
         tStream << "NNend not found in file!" << std::endl;
         //    throw NS::Exception(tStream.str());
     }

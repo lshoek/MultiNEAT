@@ -713,7 +713,7 @@ namespace NEAT
                 }
             }
 
-            string toBinary(unsigned int n, unsigned int min_len)
+            std::string toBinary(unsigned int n, unsigned int min_len)
             {
                 std::string r;
                 while(n!=0)

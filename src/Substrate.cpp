@@ -29,8 +29,6 @@
 #include "Utils.h"
 #include "Substrate.h"
 
-using namespace std;
-
 
 namespace NEAT
 {
