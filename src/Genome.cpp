@@ -154,14 +154,14 @@ namespace NEAT
             {
                 NeuronGene n = NeuronGene(INPUT, t_nnum, 0.0);
                 // Initialize the traits
-                n.InitTraits(*a_Parameters.NeuronTraits, t_RNG);
+                n.InitTraits(a_Parameters.NeuronTraits, t_RNG);
                 m_NeuronGenes.push_back(n);
                 t_nnum++;
             }
             // add the bias
             NeuronGene n = NeuronGene(BIAS, t_nnum, 0.0);
             // Initialize the traits
-            n.InitTraits(*a_Parameters.NeuronTraits, t_RNG);
+            n.InitTraits(a_Parameters.NeuronTraits, t_RNG);
         
             m_NeuronGenes.push_back(n);
             t_nnum++;
@@ -174,7 +174,7 @@ namespace NEAT
             {
                 NeuronGene n = NeuronGene(INPUT, t_nnum, 0.0);
                 // Initialize the traits
-                n.InitTraits(*a_Parameters.NeuronTraits, t_RNG);
+                n.InitTraits(a_Parameters.NeuronTraits, t_RNG);
             
                 m_NeuronGenes.push_back(n);
                 t_nnum++;
@@ -192,7 +192,7 @@ namespace NEAT
                          (a_Parameters.MinNeuronBias + a_Parameters.MaxNeuronBias) / 2.0f,
                          a_OutputActType);
             // Initialize the traits
-            t_ngene.InitTraits(*a_Parameters.NeuronTraits, t_RNG);
+            t_ngene.InitTraits(a_Parameters.NeuronTraits, t_RNG);
         
             m_NeuronGenes.push_back(t_ngene);
             t_nnum++;
@@ -208,7 +208,7 @@ namespace NEAT
                          (a_Parameters.MinNeuronBias + a_Parameters.MaxNeuronBias) / 2.0f,
                          a_HiddenActType);
             // Initialize the traits
-            t_ngene.InitTraits(*a_Parameters.NeuronTraits, t_RNG);
+            t_ngene.InitTraits(a_Parameters.NeuronTraits, t_RNG);
             t_ngene.m_SplitY = 0.5;
         
             m_NeuronGenes.push_back(t_ngene);
@@ -223,14 +223,14 @@ namespace NEAT
                 // add the link
                 // created with zero weights. needs future random initialization. !!!!!!!!
                 LinkGene l = LinkGene(j + 1, i + 1, t_innovnum, 0.0, false);
-                l.InitTraits(*a_Parameters.LinkTraits, t_RNG);
+                l.InitTraits(a_Parameters.LinkTraits, t_RNG);
                 m_LinkGenes.push_back(l);
                 t_innovnum++;
             }
         }
     
         // Also initialize the Genome's traits
-        m_GenomeGene.InitTraits(*a_Parameters.GenomeTraits, t_RNG);
+        m_GenomeGene.InitTraits(a_Parameters.GenomeTraits, t_RNG);
     
         m_Evaluated = false;
         m_NumInputs = a_NumInputs;
@@ -278,14 +278,14 @@ namespace NEAT
             {
                 NeuronGene n = NeuronGene(INPUT, t_nnum, 0.0);
                 // Initialize the traits
-                n.InitTraits(*a_Parameters.NeuronTraits, t_RNG);
+                n.InitTraits(a_Parameters.NeuronTraits, t_RNG);
                 m_NeuronGenes.push_back(n);
                 t_nnum++;
             }
             // add the bias
             NeuronGene n = NeuronGene(BIAS, t_nnum, 0.0);
             // Initialize the traits
-            n.InitTraits(*a_Parameters.NeuronTraits, t_RNG);
+            n.InitTraits(a_Parameters.NeuronTraits, t_RNG);
 
             m_NeuronGenes.push_back(n);
             t_nnum++;
@@ -298,7 +298,7 @@ namespace NEAT
             {
                 NeuronGene n = NeuronGene(INPUT, t_nnum, 0.0);
                 // Initialize the traits
-                n.InitTraits(*a_Parameters.NeuronTraits, t_RNG);
+                n.InitTraits(a_Parameters.NeuronTraits, t_RNG);
 
                 m_NeuronGenes.push_back(n);
                 t_nnum++;
@@ -316,7 +316,7 @@ namespace NEAT
                          (a_Parameters.MinNeuronBias + a_Parameters.MaxNeuronBias) / 2.0f,
                          a_OutputActType);
             // Initialize the traits
-            t_ngene.InitTraits(*a_Parameters.NeuronTraits, t_RNG);
+            t_ngene.InitTraits(a_Parameters.NeuronTraits, t_RNG);
 
             m_NeuronGenes.push_back(t_ngene);
             t_nnum++;
@@ -333,7 +333,7 @@ namespace NEAT
                          (a_Parameters.MinNeuronBias + a_Parameters.MaxNeuronBias) / 2.0f,
                          UNSIGNED_STEP);
             // Initialize the traits
-            t_ngene.InitTraits(*a_Parameters.NeuronTraits, t_RNG);
+            t_ngene.InitTraits(a_Parameters.NeuronTraits, t_RNG);
 
             m_NeuronGenes.push_back(t_ngene);
             t_nnum++;
@@ -357,7 +357,7 @@ namespace NEAT
                                  (a_Parameters.MinNeuronBias + a_Parameters.MaxNeuronBias) / 2.0f,
                                  a_HiddenActType);
                     // Initialize the traits
-                    t_ngene.InitTraits(*a_Parameters.NeuronTraits, t_RNG);
+                    t_ngene.InitTraits(a_Parameters.NeuronTraits, t_RNG);
                     t_ngene.m_SplitY = initlt;
         
                     m_NeuronGenes.push_back(t_ngene);
@@ -384,7 +384,7 @@ namespace NEAT
                             // created with zero weights. needs future random initialization. !!!!!!!!
                             // init traits (TODO: maybe init empty traits?)
                             LinkGene l = LinkGene(j + last_src_id, i + last_dest_id, t_innovnum, 0.0, false);
-                            l.InitTraits(*a_Parameters.LinkTraits, t_RNG);
+                            l.InitTraits(a_Parameters.LinkTraits, t_RNG);
                             m_LinkGenes.push_back(l);
                             t_innovnum++;
                         }
@@ -414,7 +414,7 @@ namespace NEAT
                         // created with zero weights. needs future random initialization. !!!!!!!!
                         // init traits (TODO: maybe init empty traits?)
                         LinkGene l = LinkGene(j + last_src_id, i + last_dest_id, t_innovnum, 0.0, false);
-                        l.InitTraits(*a_Parameters.LinkTraits, t_RNG);
+                        l.InitTraits(a_Parameters.LinkTraits, t_RNG);
                         m_LinkGenes.push_back(l);
                         t_innovnum++;
                     }
@@ -428,7 +428,7 @@ namespace NEAT
                         // add the link
                         // created with zero weights. needs future random initialization. !!!!!!!!
                         LinkGene l = LinkGene(a_NumInputs, i + last_dest_id, t_innovnum, 0.0, false);
-                        l.InitTraits(*a_Parameters.LinkTraits, t_RNG);
+                        l.InitTraits(a_Parameters.LinkTraits, t_RNG);
                         m_LinkGenes.push_back(l);
                         t_innovnum++;
                     }
@@ -446,7 +446,7 @@ namespace NEAT
                         // add the link
                         // created with zero weights. needs future random initialization. !!!!!!!!
                         LinkGene l = LinkGene(j + 1, i + a_NumInputs + 1, t_innovnum, 0.0, false);
-                        l.InitTraits(*a_Parameters.LinkTraits, t_RNG);
+                        l.InitTraits(a_Parameters.LinkTraits, t_RNG);
                         m_LinkGenes.push_back(l);
                         t_innovnum++;
                     }
@@ -464,14 +464,14 @@ namespace NEAT
 
                     // created with zero weights. needs future random initialization. !!!!!!!!
                     LinkGene l = LinkGene(t_inp_id, t_outp_id, t_innovnum, 0.0, false);
-                    l.InitTraits(*a_Parameters.LinkTraits, t_RNG);
+                    l.InitTraits(a_Parameters.LinkTraits, t_RNG);
                     m_LinkGenes.push_back(l);
                     t_innovnum++;
 
                     if (a_Parameters.DontUseBiasNeuron == false)
                     {
                         LinkGene bl = LinkGene(t_bias_id, t_outp_id, t_innovnum, 0.0, false);
-                        bl.InitTraits(*a_Parameters.LinkTraits, t_RNG);
+                        bl.InitTraits(a_Parameters.LinkTraits, t_RNG);
                         m_LinkGenes.push_back(bl);
                         t_innovnum++;
                     }
@@ -480,7 +480,7 @@ namespace NEAT
         }
         
         // Also initialize the Genome's traits
-        m_GenomeGene.InitTraits(*a_Parameters.GenomeTraits, t_RNG);
+        m_GenomeGene.InitTraits(a_Parameters.GenomeTraits, t_RNG);
 
         m_Evaluated = false;
         m_NumInputs = a_NumInputs;
@@ -1413,15 +1413,15 @@ namespace NEAT
         // add trait differences according to each one's coeff
         for(auto it = t_total_link_trait_difference.begin(); it != t_total_link_trait_difference.end(); it++)
         {
-            t_total_distance += ((*a_Parameters.LinkTraits)[it->first].m_ImportanceCoeff * it->second) / t_num_matching_links;
+            t_total_distance += ((a_Parameters.LinkTraits)[it->first].m_ImportanceCoeff * it->second) / t_num_matching_links;
         }
         for(auto it = t_total_neuron_trait_difference.begin(); it != t_total_neuron_trait_difference.end(); it++)
         {
-            t_total_distance += ((*a_Parameters.NeuronTraits)[it->first].m_ImportanceCoeff * it->second) / t_num_matching_neurons;
+            t_total_distance += ((a_Parameters.NeuronTraits)[it->first].m_ImportanceCoeff * it->second) / t_num_matching_neurons;
         }
         for(auto it = t_genome_link_trait_difference.begin(); it != t_genome_link_trait_difference.end(); it++)
         {
-            t_total_distance += ((*a_Parameters.GenomeTraits)[it->first].m_ImportanceCoeff * it->second);
+            t_total_distance += ((a_Parameters.GenomeTraits)[it->first].m_ImportanceCoeff * it->second);
         }
 
         return t_total_distance;
@@ -1789,7 +1789,7 @@ namespace NEAT
             // Initialize the traits
             if (a_RNG.RandFloat() < 0.5)
             {
-                t_ngene.InitTraits(*a_Parameters.NeuronTraits, a_RNG);
+                t_ngene.InitTraits(a_Parameters.NeuronTraits, a_RNG);
             }
             else
             {   // mate instead of randomizing
@@ -1808,13 +1808,13 @@ namespace NEAT
             // First link
             LinkGene l1 = LinkGene(t_in, t_nid, t_l1id, 1.0, t_recurrentflag);
             // Init the link's traits
-            l1.InitTraits(*a_Parameters.LinkTraits, a_RNG);
+            l1.InitTraits(a_Parameters.LinkTraits, a_RNG);
             m_LinkGenes.push_back(l1);
 
             // Second link
             LinkGene l2 = LinkGene(t_nid, t_out, t_l2id, t_orig_weight, t_recurrentflag);
             // Init the link's traits
-            l2.InitTraits(*a_Parameters.LinkTraits, a_RNG);
+            l2.InitTraits(a_Parameters.LinkTraits, a_RNG);
             m_LinkGenes.push_back(l2);
         }
         else
@@ -1899,7 +1899,7 @@ namespace NEAT
             // Initialize the traits
             if (a_RNG.RandFloat() < 0.5)
             {
-                t_ngene.InitTraits(*a_Parameters.NeuronTraits, a_RNG);
+                t_ngene.InitTraits(a_Parameters.NeuronTraits, a_RNG);
             }// mate instead of randomizing
             else
             {
@@ -1915,12 +1915,12 @@ namespace NEAT
             // First link
             LinkGene l1 = LinkGene(t_in, t_nid, t_l1id, 1.0, t_recurrentflag);
             // initialize the link's traits
-            l1.InitTraits(*a_Parameters.LinkTraits, a_RNG);
+            l1.InitTraits(a_Parameters.LinkTraits, a_RNG);
             m_LinkGenes.push_back(l1);
             // Second link
             LinkGene l2 = LinkGene(t_nid, t_out, t_l2id, t_orig_weight, t_recurrentflag);
             // initialize the link's traits
-            l2.InitTraits(*a_Parameters.LinkTraits, a_RNG);
+            l2.InitTraits(a_Parameters.LinkTraits, a_RNG);
             m_LinkGenes.push_back(l2);
         }
 
@@ -2137,7 +2137,7 @@ namespace NEAT
         // Create and add the link
         LinkGene l = LinkGene(t_n1id, t_n2id, t_innovid, t_weight, t_MakeRecurrent);
         // init the link's traits
-        l.InitTraits(*a_Parameters.LinkTraits, a_RNG);
+        l.InitTraits(a_Parameters.LinkTraits, a_RNG);
         m_LinkGenes.push_back(l);
 
         // All done.
@@ -2585,14 +2585,14 @@ namespace NEAT
     {
         for (auto &m_NeuronGene : m_NeuronGenes)
         {
-            m_NeuronGene.InitTraits(*a_Parameters.NeuronTraits, a_RNG);
+            m_NeuronGene.InitTraits(a_Parameters.NeuronTraits, a_RNG);
         }
         for (auto &m_LinkGene : m_LinkGenes)
         {
-            m_LinkGene.InitTraits(*a_Parameters.LinkTraits, a_RNG);
+            m_LinkGene.InitTraits(a_Parameters.LinkTraits, a_RNG);
         }
         
-        m_GenomeGene.InitTraits(*a_Parameters.GenomeTraits, a_RNG);
+        m_GenomeGene.InitTraits(a_Parameters.GenomeTraits, a_RNG);
     }
 
     // Perturbs the A parameters of the neuron activation functions
@@ -2706,7 +2706,7 @@ namespace NEAT
             // don't mutate inputs and bias
             if ((it->Type() != INPUT) && (it->Type() != BIAS))
             {
-                if (it->MutateTraits(*a_Parameters.NeuronTraits, a_RNG))
+                if (it->MutateTraits(a_Parameters.NeuronTraits, a_RNG))
                 {
                     did_mutate = true;
                 }
@@ -2720,7 +2720,7 @@ namespace NEAT
         bool did_mutate = false;
         for(auto it = m_LinkGenes.begin(); it != m_LinkGenes.end(); it++)
         {
-            if ( it->MutateTraits(*a_Parameters.LinkTraits, a_RNG) )
+            if ( it->MutateTraits(a_Parameters.LinkTraits, a_RNG) )
             {
                 did_mutate = true;
             }
@@ -2730,7 +2730,7 @@ namespace NEAT
     
     bool Genome::Mutate_GenomeTraits(const Parameters &a_Parameters, RNG &a_RNG)
     {
-        return m_GenomeGene.MutateTraits(*a_Parameters.GenomeTraits, a_RNG);
+        return m_GenomeGene.MutateTraits(a_Parameters.GenomeTraits, a_RNG);
     }
 
     // Mate this genome with dad and return the baby

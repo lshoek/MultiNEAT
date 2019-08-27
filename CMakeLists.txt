@@ -152,8 +152,6 @@ if(GENERATE_PYTHON_BINDINGS)
     target_include_directories(_multineat
             PRIVATE
             ${Boost_INCLUDE_DIRS}
-            PUBLIC
-            $<INSTALL_INTERFACE:${MultiNEAT_SRC_DIR}/include>
             )
 
     set(MULTINEAT_PYTHON_LIBRARIES

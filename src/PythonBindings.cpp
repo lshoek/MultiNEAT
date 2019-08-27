@@ -250,6 +250,7 @@ BOOST_PYTHON_MODULE(_multineat)
     class_<Genome, Genome*>("Genome", init<>())
 
             .def(init<char*>())
+            .def(init<const Genome&>())
             .def(init<unsigned int, unsigned int, unsigned int, unsigned int,
                     ActivationFunction, ActivationFunction, Parameters>())
             .def(init<unsigned int, unsigned int, unsigned int, unsigned int,
@@ -267,6 +268,7 @@ BOOST_PYTHON_MODULE(_multineat)
             .def("GetFitness", &Genome::GetFitness)
             .def("SetFitness", &Genome::SetFitness)
             .def("GetID", &Genome::GetID)
+            .def("SetID", &Genome::SetID)
             .def("GetDepth", &Genome::GetDepth)
             .def("CalculateDepth", &Genome::CalculateDepth)
             .def("DerivePhenotypicChanges", &Genome::DerivePhenotypicChanges)
@@ -400,6 +402,25 @@ BOOST_PYTHON_MODULE(_multineat)
             .def_readwrite("Species", &Population::m_Species)
             .def_readwrite("Parameters", &Population::m_Parameters)
             .def_readwrite("RNG", &Population::m_RNG)
+            ;
+
+    class_<Innovation>("Innovation", init<int, InnovationType, int, int, NeuronType, int>())
+            .def("ID", &Innovation::ID)
+            .def("InnovType", &Innovation::InnovType)
+            .def("FromNeuronID", &Innovation::FromNeuronID)
+            .def("ToNeuronID", &Innovation::ToNeuronID)
+            .def("NeuronID", &Innovation::NeuronID)
+            .def("GetNeuronType", &Innovation::GetNeuronType)
+            ;
+    
+    class_<InnovationDatabase>("InnovationDatabase", init<>())
+            .def(init<int, int>())
+            .def("Init_i_i", static_cast<void (InnovationDatabase::*)(int,int)>(&InnovationDatabase::Init))
+            .def("Init_with_genome", static_cast<void (InnovationDatabase::*)(const Genome&)>(&InnovationDatabase::Init))
+            .def("Init_with_file", static_cast<void (InnovationDatabase::*)(std::ifstream&)>(&InnovationDatabase::Init))
+            .def("Flush", &InnovationDatabase::Flush)
+            .def("GetInnovationByIdx", &InnovationDatabase::GetInnovationByIdx)
+            .def("Save", &InnovationDatabase::Save)
             ;
 
 ///////////////////////////////////////////////////////////////////

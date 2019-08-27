@@ -257,7 +257,7 @@ namespace NEAT
         bool MutateTraits(const std::map<std::string, TraitParameters> &tp, RNG &a_RNG)
         {
             bool did_mutate = false;
-            for(auto it = tp.begin(); it != tp.end(); it++)
+            for(auto it = tp.cbegin(); it != tp.cend(); it++)
             {
                 // Check what kind of type is this and modify it
                 TraitType t;

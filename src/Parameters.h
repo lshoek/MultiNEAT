@@ -351,9 +351,9 @@ public:
     /////////////////////////////////////
     // Universal traits
     /////////////////////////////////////
-    std::map< std::string, TraitParameters > *NeuronTraits;
-    std::map< std::string, TraitParameters > *LinkTraits;
-    std::map< std::string, TraitParameters > *GenomeTraits;
+    std::map< std::string, TraitParameters > NeuronTraits;
+    std::map< std::string, TraitParameters > LinkTraits;
+    std::map< std::string, TraitParameters > GenomeTraits;
     double MutateNeuronTraitsProb;
     double MutateLinkTraitsProb;
     double MutateGenomeTraitsProb;
@@ -715,23 +715,23 @@ public:
 
     void SetNeuronTraitParameters(std::string name, py::dict trait_params)
     {
-        (*NeuronTraits)[name] = TraitParamsFromDict(trait_params);
+        NeuronTraits[name] = TraitParamsFromDict(trait_params);
     }
 
     void SetLinkTraitParameters(std::string name, py::dict trait_params)
     {
-        (*LinkTraits)[name] = TraitParamsFromDict(trait_params);
+        LinkTraits[name] = TraitParamsFromDict(trait_params);
     }
     
     void SetGenomeTraitParameters(std::string name, py::dict trait_params)
     {
-        (*GenomeTraits)[name] = TraitParamsFromDict(trait_params);
+        GenomeTraits[name] = TraitParamsFromDict(trait_params);
     }
     
     py::list ListNeuronTraitParameters()
     {
         py::list l;
-        for(auto it=NeuronTraits->begin(); it!=NeuronTraits->end(); it++)
+        for(auto it=NeuronTraits.begin(); it!=NeuronTraits.end(); it++)
         {
             l.append(it->first);
         }
@@ -741,7 +741,7 @@ public:
     py::list ListLinkTraitParameters()
     {
         py::list l;
-        for(auto it=LinkTraits->begin(); it!=LinkTraits->end(); it++)
+        for(auto it=LinkTraits.begin(); it!=LinkTraits.end(); it++)
         {
             l.append(it->first);
         }
@@ -751,7 +751,7 @@ public:
     py::list ListGenomeTraitParameters()
     {
         py::list l;
-        for(auto it=GenomeTraits->begin(); it!=GenomeTraits->end(); it++)
+        for(auto it=GenomeTraits.begin(); it!=GenomeTraits.end(); it++)
         {
             l.append(it->first);
         }
@@ -760,47 +760,47 @@ public:
     
     void ClearNeuronTraitParameters()
     {
-        NeuronTraits->clear();
+        NeuronTraits.clear();
     }
 
     void ClearLinkTraitParameters()
     {
-        LinkTraits->clear();
+        LinkTraits.clear();
     }
     
     void ClearGenomeTraitParameters()
     {
-        GenomeTraits->clear();
+        GenomeTraits.clear();
     }
     
     py::dict GetNeuronTraitParameters(std::string name)
     {
-        if (NeuronTraits->count(name) == 0)
+        if (NeuronTraits.count(name) == 0)
         {
             throw std::runtime_error("No such trait");
         }
         
-        return DictFromTraitParams((*NeuronTraits)[name]);
+        return DictFromTraitParams(NeuronTraits[name]);
     }
 
     py::dict GetLinkTraitParameters(std::string name)
     {
-        if (LinkTraits->count(name) == 0)
+        if (LinkTraits.count(name) == 0)
         {
             throw std::runtime_error("No such trait");
         }
     
-        return DictFromTraitParams((*LinkTraits)[name]);
+        return DictFromTraitParams(LinkTraits[name]);
     }
     
     py::dict GetGenomeTraitParameters(std::string name)
     {
-        if (GenomeTraits->count(name) == 0)
+        if (GenomeTraits.count(name) == 0)
         {
             throw std::runtime_error("No such trait");
         }
         
-        return DictFromTraitParams((*GenomeTraits)[name]);
+        return DictFromTraitParams(GenomeTraits[name]);
     }
     
     

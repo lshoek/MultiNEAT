@@ -608,9 +608,9 @@ namespace NEAT
         , LeoSeed(false)
         , GeometrySeed(false)
         // Mutation parameters maps
-        , NeuronTraits(new std::map< std::string, TraitParameters >())
-        , LinkTraits(new std::map< std::string, TraitParameters >())
-        , GenomeTraits(new std::map< std::string, TraitParameters >())
+        , NeuronTraits()
+        , LinkTraits()
+        , GenomeTraits()
 
     {
         //Reset();
@@ -618,9 +618,6 @@ namespace NEAT
 
     Parameters::~Parameters()
     {
-        delete GenomeTraits;
-        delete NeuronTraits;
-        delete LinkTraits;
     }
 
     int Parameters::Load(std::ifstream &a_DataFile)
