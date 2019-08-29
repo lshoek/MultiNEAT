@@ -83,20 +83,40 @@ if (NOT SKBUILD)
 endif(NOT SKBUILD)
 
 if(GENERATE_PYTHON_BINDINGS)
-    find_package(Python3
-        COMPONENTS
-            Development
-        REQUIRED
-    )
+
+    if (${CMAKE_VERSION} VERSION_LESS "3.12.0")
+        set(CMAKE_LEGACY_PYTHON ON)
+    endif()
+
+    if (CMAKE_LEGACY_PYTHON)
+        find_package(PythonLibs REQUIRED)
+        message("found python ${PYTHONLIBS_VERSION_STRING} [pythonlibs]")
+        string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)"
+                "\\1" 3
+                ${PYTHONLIBS_VERSION_STRING})
+        string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)"
+                "\\1\\2" 3x
+                ${PYTHONLIBS_VERSION_STRING})
+        string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)"
+                "-py\\1\\2" PY3x
+                ${PYTHONLIBS_VERSION_STRING})
+    else()
+        find_package(Python3
+            COMPONENTS
+                Development
+            REQUIRED
+        )
+        message("found python ${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}.${Python3_VERSION_PATCH}")
+
+        set(3 ${Python3_VERSION_MAJOR})
+        set(3x "${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}")
+        set(PY3x "-py${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}") # ubuntu version
+
+    endif()
+
     if (SKBUILD)
         find_package(PythonExtensions REQUIRED)
     endif()
-
-    message("found python ${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}.${Python3_VERSION_PATCH}")
-
-    set(3 ${Python3_VERSION_MAJOR})
-    set(3x "${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}")
-    set(PY3x "-py${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}") # ubuntu version
 
     find_package(Boost COMPONENTS
             python${3}
@@ -134,6 +154,11 @@ if(GENERATE_PYTHON_BINDINGS)
                 ${SOURCE_FILES}
                 src/PythonBindings.cpp)
         python_extension_module(_multineat)
+    elseif(CMAKE_LEGACY_PYTHON)
+        python_add_module(_multineat
+                ${SOURCE_FILES}
+                src/PythonBindings.cpp
+                )
     else()
         Python3_add_library(_multineat
                 MODULE
@@ -151,6 +176,7 @@ if(GENERATE_PYTHON_BINDINGS)
 
     target_include_directories(_multineat
             PRIVATE
+            $<$<BOOL:${CMAKE_LEGACY_PYTHON}>:${PYTHON_INCLUDE_DIRS}>
             ${Boost_INCLUDE_DIRS}
             )
 
@@ -183,6 +209,7 @@ if(GENERATE_PYTHON_BINDINGS)
         install(TARGETS _multineat LIBRARY DESTINATION "${site_packages}/multineat")
     else()
         target_link_libraries(_multineat PUBLIC
+                $<$<BOOL:${CMAKE_LEGACY_PYTHON}>:${PYTHON_LIBRARIES}>
                 ${MULTINEAT_PYTHON_LIBRARIES})
     endif()
 
