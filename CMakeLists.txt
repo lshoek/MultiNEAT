@@ -54,7 +54,7 @@ if (NOT SKBUILD)
             PRIVATE
             ${Boost_INCLUDE_DIRS}
             PUBLIC
-            $<INSTALL_INTERFACE:${MultiNEAT_SRC_DIR}/include>
+            $<INSTALL_INTERFACE:${MultiNEAT_SRC_DIR}>
             )
 
     target_link_libraries(MultiNEAT

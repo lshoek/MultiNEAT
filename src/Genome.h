@@ -57,7 +57,7 @@
 #include "Assert.h"
 #include "PhenotypeBehavior.h"
 #include "Random.h"
-#include "Util.h"
+#include "Utils.h"
 
 namespace NEAT
 {

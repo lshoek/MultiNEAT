@@ -3496,6 +3496,7 @@ namespace NEAT
         for(auto it = m_NeuronGenes.begin(); it != m_NeuronGenes.end(); it++)
         {
             std::cout << "ID: " << it->ID() << " : ";
+            std::cout << "b(" << it->m_Bias << ") : ";
             PrintTraits((*it).m_Traits);
 
             std::cout << "\n";
@@ -3507,6 +3508,7 @@ namespace NEAT
         for(auto it = m_LinkGenes.begin(); it != m_LinkGenes.end(); it++)
         {
             std::cout << "ID: " << it->InnovationID() << " : ";
+            std::cout << "w(" << it->m_Weight << ") : ";
             PrintTraits((*it).m_Traits);
             std::cout << "\n";
         }
