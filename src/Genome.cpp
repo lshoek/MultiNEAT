@@ -45,7 +45,7 @@
 #include "Random.h"
 #include "Utils.h"
 #include "Parameters.h"
-#include "Assert.h"
+#include "MultiNEATAssert.h"
 
 namespace NEAT
 {

@@ -54,7 +54,7 @@
 #include "Substrate.h"
 #include "Innovation.h"
 #include "Genes.h"
-#include "Assert.h"
+#include "MultiNEATAssert.h"
 #include "PhenotypeBehavior.h"
 #include "Random.h"
 #include "Utils.h"

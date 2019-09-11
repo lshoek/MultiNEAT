@@ -37,7 +37,7 @@
 #include <iostream>
 #include <vector>
 #include <limits>
-#include "Assert.h"
+#include "MultiNEATAssert.h"
 #include "Random.h"
 
 enum SearchMode
