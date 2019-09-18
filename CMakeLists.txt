@@ -92,7 +92,7 @@ if (NOT SKBUILD)
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 
-    install(DIRECTORY src
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/multineat
             FILES_MATCHING PATTERN "*.h")
 
