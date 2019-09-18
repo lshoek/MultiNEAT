@@ -1,3 +1,6 @@
+# This file and other cmake files in this project where inspired by https://github.com/pabloariasal/modern-cmake-sample
+# Based on the article: https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/
+
 cmake_minimum_required(VERSION 3.3)
 project(MultiNEAT VERSION 0.6 LANGUAGES CXX)
 
@@ -122,10 +125,6 @@ if (NOT SKBUILD)
 
     ##############################################
     ## Exporting from the build tree
-    configure_file(${CMAKE_CURRENT_LIST_DIR}/cmake/FindMultiNEAT.cmake
-            ${CMAKE_CURRENT_BINARY_DIR}/FindMultiNEAT.cmake
-            COPYONLY)
-
     export(EXPORT MultiNEAT-targets FILE ${CMAKE_CURRENT_BINARY_DIR}/MultiNEATTargets.cmake NAMESPACE MultiNEAT::)
 
     #Register package in user's package registry
