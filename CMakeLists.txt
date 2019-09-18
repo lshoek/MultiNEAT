@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.3)
-project(MultiNEAT)
+project(MultiNEAT VERSION 0.6 LANGUAGES CXX)
 
 set (CMAKE_CXX_STANDARD 11)
 
@@ -16,6 +16,7 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
 endif()
 
+include(GNUInstallDirs)
 
 find_package(Threads REQUIRED)
 
@@ -48,13 +49,13 @@ set(Boost_USE_STATIC_RUNTIME    OFF)
 
 if (NOT SKBUILD)
 
-    add_library(MultiNEAT STATIC ${SOURCE_FILES})
+    add_library(MultiNEAT SHARED ${SOURCE_FILES})
 
     target_include_directories(MultiNEAT
             PRIVATE
             ${Boost_INCLUDE_DIRS}
             PUBLIC
-            $<INSTALL_INTERFACE:${MultiNEAT_SRC_DIR}>
+            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/multineat>
             )
 
     target_link_libraries(MultiNEAT
@@ -79,6 +80,56 @@ if (NOT SKBUILD)
             MultiNEAT
             $<$<BOOL:${WIN32}>:ws2_32>
             )
+
+    # INSTALL SECTION
+    set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/MultiNEAT)
+
+    install(TARGETS MultiNEAT
+            EXPORT MultiNEAT-targets
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    )
+
+    install(DIRECTORY src
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/multineat
+            FILES_MATCHING PATTERN "*.h")
+
+    set_target_properties(MultiNEAT PROPERTIES EXPORT_NAME MultiNEAT)
+
+    install(EXPORT MultiNEAT-targets
+            FILE MultiNEATTargets.cmake
+            NAMESPACE MultiNEAT::
+            DESTINATION ${INSTALL_CONFIGDIR})
+
+    include(CMakePackageConfigHelpers)
+    write_basic_package_version_file(
+            ${CMAKE_CURRENT_BINARY_DIR}/MultiNEATConfigVersion.cmake
+            VERSION ${PROJECT_VERSION}
+            COMPATIBILITY AnyNewerVersion
+    )
+
+    configure_package_config_file(
+            ${CMAKE_CURRENT_LIST_DIR}/cmake/MultiNEATConfig.cmake.in
+            ${CMAKE_CURRENT_BINARY_DIR}/MultiNEATConfig.cmake
+            INSTALL_DESTINATION ${INSTALL_CONFIGDIR}
+        )
+
+    #Install the config, configversion and custom find modules
+    install(FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/MultiNEATConfig.cmake
+            ${CMAKE_CURRENT_BINARY_DIR}/MultiNEATConfigVersion.cmake
+            DESTINATION ${INSTALL_CONFIGDIR}
+            )
+
+    ##############################################
+    ## Exporting from the build tree
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/cmake/FindMultiNEAT.cmake
+            ${CMAKE_CURRENT_BINARY_DIR}/FindMultiNEAT.cmake
+            COPYONLY)
+
+    export(EXPORT MultiNEAT-targets FILE ${CMAKE_CURRENT_BINARY_DIR}/MultiNEATTargets.cmake NAMESPACE MultiNEAT::)
+
+    #Register package in user's package registry
+    export(PACKAGE MultiNEAT)
 
 endif(NOT SKBUILD)
 
