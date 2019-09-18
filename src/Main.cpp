@@ -37,7 +37,7 @@ double xortest(Genome& g)
             {1.0,0.0,1.0},
             {1.0,1.0,1.0},
     };
-    static const std::vector< const double > outputs {
+    static const std::vector< double > outputs {
         0.0,
         1.0,
         1.0,
