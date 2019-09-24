@@ -4,6 +4,10 @@
 cmake_minimum_required(VERSION 3.3)
 project(MultiNEAT VERSION 0.6 LANGUAGES CXX)
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(MACOS TRUE)
+endif()
+
 set (CMAKE_CXX_STANDARD 11)
 
 set (MultiNEAT_SRC_DIR ${CMAKE_SOURCE_DIR}/src)
@@ -198,7 +202,7 @@ if(GENERATE_PYTHON_BINDINGS)
         message(FATAL_ERROR "Boost python numpy 3 not found")
     endif()
 
-    if (SKBUILD)
+    if (SKBUILD AND NOT MACOS)
         add_library(_multineat
                 MODULE
                 ${SOURCE_FILES}
@@ -252,15 +256,18 @@ if(GENERATE_PYTHON_BINDINGS)
             $<$<BOOL:${Boost_numpy${PY3x}_FOUND}>:${Boost_NUMPY${PY3x}_LIBRARY}>
             )
 
-    if (SKBUILD)
+    if (SKBUILD AND NOT MACOS)
         target_link_libraries(_multineat
                 ${MULTINEAT_PYTHON_LIBRARIES})
-        set(site_packages "${PYTHON_RELATIVE_SITE_PACKAGES_DIR}")
-        install(TARGETS _multineat LIBRARY DESTINATION "${site_packages}/multineat")
     else()
         target_link_libraries(_multineat PUBLIC
                 $<$<BOOL:${CMAKE_LEGACY_PYTHON}>:${PYTHON_LIBRARIES}>
                 ${MULTINEAT_PYTHON_LIBRARIES})
     endif()
+
+    if (SKBUILD)
+        set(site_packages "${PYTHON_RELATIVE_SITE_PACKAGES_DIR}")
+        install(TARGETS _multineat LIBRARY DESTINATION "${site_packages}/multineat")
+    endif ()
 
 endif()
