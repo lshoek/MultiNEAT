@@ -150,6 +150,7 @@ namespace NEAT
         std::sort(t_Evaluated.begin(), t_Evaluated.end(), genome_greater);
 
         // Here might be introduced better selection scheme, but this works OK for now
+        //TODO create tournament selection here
         if (!a_Parameters.RouletteWheelSelection)
         {   //start with the last one just for comparison sake
             //int temp_genome;

@@ -523,7 +523,6 @@ namespace NEAT
 
     public:
 
-#ifdef USE_BOOST_PYTHON
         // Serialization
         friend class boost::serialization::access;
         template<class Archive>
@@ -538,7 +537,6 @@ namespace NEAT
             // the traits too, TODO
             //ar & m_Traits;
         }
-#endif
 
         double GetWeight() const
         {
@@ -702,7 +700,6 @@ namespace NEAT
         // The type of activation function the neuron has
         ActivationFunction m_ActFunction;
 
-#ifdef USE_BOOST_PYTHON
         // Serialization
         friend class boost::serialization::access;
         template<class Archive>
@@ -722,7 +719,6 @@ namespace NEAT
             // TODO the traits also
             //ar & m_Traits;
         }
-#endif
 
         ////////////////
         // Constructors

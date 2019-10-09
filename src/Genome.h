@@ -762,8 +762,6 @@ namespace NEAT
         void Clean_Net(std::vector<Connection> &connections, unsigned int input_count,
                        unsigned int output_count, unsigned int hidden_count);
 
-#ifdef USE_BOOST_PYTHON
-
         // Serialization
         friend class boost::serialization::access;
         template<class Archive>
@@ -781,8 +779,6 @@ namespace NEAT
             ar & m_Evaluated;
             //ar & m_PhenotypeBehavior; // todo: think about how we will handle the behaviors with pickle
         }
-
-#endif
 
     };
 

@@ -22,6 +22,10 @@
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+
+#define BOOST_TEST_MODULE XOR test
+#include <boost/test/included/unit_test.hpp>
+
 using namespace NEAT;
 
 double xortest(Genome& g)
@@ -59,7 +63,7 @@ double xortest(Genome& g)
 }
 
 
-int main()
+BOOST_AUTO_TEST_CASE(multineat_xor)
 {
     Parameters *_params = new Parameters();
     Parameters &params = *_params;
@@ -107,7 +111,7 @@ int main()
     params.SurvivalRate = 0.2;
 
     params.AllowClones = true;
-    params.AllowLoops = true;
+    params.AllowLoops = false;
 
     params.MutateNeuronTraitsProb = 0.0;
     params.MutateLinkTraitsProb = 0.0;
@@ -123,21 +127,18 @@ int main()
     int seed = 0; // time(nullptr)
     Population pop(s, params, true, 1.0, seed);
 
+    double bestf = -std::numeric_limits<double>::infinity();
     for(int k=1; k<=21; k++)
     {
-        double bestf = -std::numeric_limits<double>::infinity();
-        for(unsigned int i=0; i < pop.m_Species.size(); i++)
+        bestf = -std::numeric_limits<double>::infinity();
+        for(auto & m_Specie : pop.m_Species)
         {
-            for(unsigned int j=0; j < pop.m_Species[i].m_Individuals.size(); j++)
+            for(auto & m_Individual : m_Specie.m_Individuals)
             {
-                double f = xortest(pop.m_Species[i].m_Individuals[j]);
-                pop.m_Species[i].m_Individuals[j].SetFitness(f);
-                pop.m_Species[i].m_Individuals[j].SetEvaluated();
-                
-//                if (pop.m_Species[i].m_Individuals[j].HasLoops())
-//                {
-//                    std::cout << "loops found in individual\n";
-//                }
+                double f = xortest(m_Individual);
+                m_Individual.SetFitness(f);
+                m_Individual.SetEvaluated();
+                BOOST_TEST(not m_Individual.HasLoops());
 
                 if (f > bestf)
                 {
@@ -158,9 +159,7 @@ int main()
     double best_fitness = pop.GetBestFitnessEver();
     std::cout << "best fitness: " << best_fitness << std::endl;
 
-    //TODO make these two a unit test
-    assert(best_fitness > -1e-8);
-    assert(best_fitness < 0);
-
-    return 0;
+    BOOST_TEST(best_fitness == bestf);
+    BOOST_TEST(best_fitness > -1e-5);
+    BOOST_TEST(best_fitness < 0);
 }

@@ -2,11 +2,7 @@
 # Based on the article: https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/
 
 cmake_minimum_required(VERSION 3.3)
-project(MultiNEAT VERSION 0.6 LANGUAGES CXX)
-
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(MACOS TRUE)
-endif()
+project(MultiNEAT VERSION 0.6 LANGUAGES C CXX)
 
 set (CMAKE_CXX_STANDARD 11)
 
@@ -62,6 +58,7 @@ if (NOT SKBUILD)
             PRIVATE
             ${Boost_INCLUDE_DIRS}
             PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/multineat>
             )
 
@@ -77,15 +74,6 @@ if (NOT SKBUILD)
     target_compile_definitions(MultiNEAT
             PUBLIC
             USE_BOOST_RANDOM
-            )
-
-    add_executable(MultiNEAT_Test
-            src/Main.cpp
-            )
-
-    target_link_libraries(MultiNEAT_Test
-            MultiNEAT
-            $<$<BOOL:${WIN32}>:ws2_32>
             )
 
     # INSTALL SECTION
@@ -202,13 +190,7 @@ if(GENERATE_PYTHON_BINDINGS)
         message(FATAL_ERROR "Boost python numpy 3 not found")
     endif()
 
-    if (SKBUILD AND NOT MACOS)
-        add_library(_multineat
-                MODULE
-                ${SOURCE_FILES}
-                src/PythonBindings.cpp)
-        python_extension_module(_multineat)
-    elseif(CMAKE_LEGACY_PYTHON)
+    if(CMAKE_LEGACY_PYTHON)
         python_add_module(_multineat
                 ${SOURCE_FILES}
                 src/PythonBindings.cpp
@@ -256,18 +238,18 @@ if(GENERATE_PYTHON_BINDINGS)
             $<$<BOOL:${Boost_numpy${PY3x}_FOUND}>:${Boost_NUMPY${PY3x}_LIBRARY}>
             )
 
-    if (SKBUILD AND NOT MACOS)
-        target_link_libraries(_multineat
-                ${MULTINEAT_PYTHON_LIBRARIES})
-    else()
-        target_link_libraries(_multineat PUBLIC
-                $<$<BOOL:${CMAKE_LEGACY_PYTHON}>:${PYTHON_LIBRARIES}>
-                ${MULTINEAT_PYTHON_LIBRARIES})
-    endif()
+    target_link_libraries(_multineat PUBLIC
+            $<$<BOOL:${CMAKE_LEGACY_PYTHON}>:${PYTHON_LIBRARIES}>
+            ${MULTINEAT_PYTHON_LIBRARIES})
 
     if (SKBUILD)
         set(site_packages "${PYTHON_RELATIVE_SITE_PACKAGES_DIR}")
         install(TARGETS _multineat LIBRARY DESTINATION "${site_packages}/multineat")
     endif ()
 
+endif()
+
+if (ENABLE_TESTING)
+    enable_testing()
+    add_subdirectory(examples)
 endif()
