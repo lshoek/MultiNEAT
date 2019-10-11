@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Installing CMAKE
-          command: sudo apt install -y cmake
+          command: sudo apt install -y cmake libboost-python-dev libboost-numpy-dev
       - run:
           name: Create Virtual Environment
           command: |
