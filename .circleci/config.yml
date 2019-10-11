@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Installing CMAKE
-          command: apt install -y cmake
+          command: sudo apt install -y cmake
       - run:
           name: Create Virtual Environment
           command: |
@@ -21,7 +21,7 @@ jobs:
           command: cmake --build build
       - run:
           name: Installing
-          command: cmake --install build
+          command: sudo cmake --install build
       - run:
           name: PIP installing
           command: pip install .
