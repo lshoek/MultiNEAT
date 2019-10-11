@@ -251,5 +251,5 @@ endif()
 
 if (ENABLE_TESTING)
     enable_testing()
-    add_subdirectory(examples)
+    add_subdirectory(tests)
 endif()

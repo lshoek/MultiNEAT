@@ -236,15 +236,20 @@ BOOST_PYTHON_MODULE(_multineat)
             .def_readwrite("ToNeuronID", &LinkGene::m_ToNeuronID)
             .def_readwrite("InnovationID", &LinkGene::m_InnovationID)
             .def_readwrite("Weight", &LinkGene::m_Weight)
+            .def_readwrite("IsRecurrent", &LinkGene::m_IsRecurrent)
             ;
 
     class_<NeuronGene>("NeuronGene", init<>())
+            .def_readwrite("ID", &NeuronGene::m_ID)
             .def_readwrite("A", &NeuronGene::m_A)
             .def_readwrite("B", &NeuronGene::m_B)
             .def_readwrite("TimeConstant", &NeuronGene::m_TimeConstant)
             .def_readwrite("Bias", &NeuronGene::m_Bias)
             .def_readwrite("ActFunction", &NeuronGene::m_ActFunction)
             .def_readwrite("Type", &NeuronGene::m_Type)
+            .def_readwrite("x", &NeuronGene::x)
+            .def_readwrite("y", &NeuronGene::y)
+            .def_readwrite("SplitY", &NeuronGene::m_SplitY)
             ;
 
     class_<Genome, Genome*>("Genome", init<>())
@@ -267,6 +272,8 @@ BOOST_PYTHON_MODULE(_multineat)
 
             .def("GetFitness", &Genome::GetFitness)
             .def("SetFitness", &Genome::SetFitness)
+            .def("GetAdjFitness", &Genome::GetAdjFitness)
+            .def("SetAdjFitness", &Genome::SetAdjFitness)
             .def("GetID", &Genome::GetID)
             .def("SetID", &Genome::SetID)
             .def("GetDepth", &Genome::GetDepth)
@@ -301,6 +308,8 @@ BOOST_PYTHON_MODULE(_multineat)
             .def("Mate", &Genome::Mate)
             .def("Mutate", &Genome::Mutate)
 
+            .def("Serialize", &Genome::Serialize)
+            .def("Deserialize", &Genome::Deserialize)
             .def_pickle(Genome_pickle_suite())
             ;
 

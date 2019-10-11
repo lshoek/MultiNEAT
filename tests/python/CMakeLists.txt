@@ -1,0 +1,5 @@
+if(GENERATE_PYTHON_BINDINGS)
+    add_test(python_test_import test_import.py)
+    add_test(python_test_raw_genome test_raw_genome.py)
+    add_test(python_test_xor test_xor.py)
+endif()

@@ -780,8 +780,22 @@ namespace NEAT
             //ar & m_PhenotypeBehavior; // todo: think about how we will handle the behaviors with pickle
         }
 
-    };
+        std::string Serialize() const
+        {
+            std::ostringstream os;
+            boost::archive::text_oarchive oa(os);
+            oa << *this;
+            return os.str();
+        }
 
+        void Deserialize(const std::string &text)
+        {
+            std::istringstream is (text);
+            boost::archive::text_iarchive ia (is);
+            ia >> *this;
+        }
+
+    };
 
 #ifdef USE_BOOST_PYTHON
 
@@ -799,17 +813,11 @@ namespace NEAT
         {
             py::str s = py::extract<py::str> (entries)();
             std::string st = py::extract<std::string> (s)();
-            std::istringstream is (st);
-
-            boost::archive::text_iarchive ia (is);
-            ia >> a;
+            a.Deserialize(st);
         }
     };
 
 #endif
-
-#define DBG(x) { std::cerr << x << std::endl; }
-
 
 } // namespace NEAT
 
