@@ -23,5 +23,7 @@ if(GENERATE_PYTHON_BINDINGS)
     #target_link_libraries(generate_genome_file
     #        MultiNEAT)
 
-    add_test(python_to_c++_to_python test.py)
+    add_test(python_to_cpp_to_python ${CMAKE_CURRENT_SOURCE_DIR}/test.py)
+    set_tests_properties(python_to_cpp_to_python PROPERTIES
+            ENVIRONMENT "CMAKE_CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
 endif()

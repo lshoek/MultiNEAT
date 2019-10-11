@@ -3,6 +3,7 @@ import unittest
 import multineat
 import subprocess
 import pickle
+import os
 
 
 def parse_bool(text: str):
@@ -146,8 +147,10 @@ class TestSerialization(unittest.TestCase):
             self.assertEqual(l_gene.Weight, cloned.LinkGenes[i].Weight)
 
     def test_python_to_cpp(self):
-        cpp_test_exe = '../../build/tests/serialization/analize_genome_file'
-        test_file = '../../build/tests/serialization/test_genome.pickle'
+        base = os.environ.get('CMAKE_CURRENT_BINARY_DIR',
+                              default=os.path.join('..', '..', 'build', 'tests', 'serialization'))
+        cpp_test_exe = os.path.join(base, 'analize_genome_file')
+        test_file = os.path.join(base, 'test_genome.txt')
 
         serialized_genome = self.g.Serialize()
         with open(test_file, 'w') as pickle_file:
