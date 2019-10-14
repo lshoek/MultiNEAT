@@ -309,7 +309,7 @@ namespace NEAT
         void SetOffspringAmount(double a_oa);
 
         // This builds a fastnetwork structure out from the genome
-        void BuildPhenotype(NeuralNetwork &net);
+        void BuildPhenotype(NeuralNetwork &net) const;
 
         // Projects the phenotype's weights back to the genome
         void DerivePhenotypicChanges(NeuralNetwork &a_Net);

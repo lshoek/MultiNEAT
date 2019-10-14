@@ -757,7 +757,7 @@ namespace NEAT
 
 
     // This builds a fastnetwork structure out from the genome
-    void Genome::BuildPhenotype(NeuralNetwork &a_Net)
+    void Genome::BuildPhenotype(NeuralNetwork &a_Net) const
     {
         // first clear out the network
         a_Net.Clear();
@@ -799,7 +799,7 @@ namespace NEAT
             {
                 try
                 {
-                    t_c.m_hebb_rate = boost::get<double>(m_LinkGenes[i].m_Traits["hebb_rate"].value);
+                    t_c.m_hebb_rate = boost::get<double>(m_LinkGenes[i].m_Traits.at("hebb_rate").value);
                 }
                 catch(const std::exception &e)
                 {
@@ -811,7 +811,7 @@ namespace NEAT
             {
                 try
                 {
-                    t_c.m_hebb_pre_rate = boost::get<double>(m_LinkGenes[i].m_Traits["hebb_pre_rate"].value);
+                    t_c.m_hebb_pre_rate = boost::get<double>(m_LinkGenes[i].m_Traits.at("hebb_pre_rate").value);
                 }
                 catch(const std::exception &e)
                 {
