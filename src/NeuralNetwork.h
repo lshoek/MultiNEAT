@@ -225,6 +225,8 @@ public:
         return m_connections.size();
     }
 
+    unsigned int CalculateNetworkDepth() const;
+
     // one-shot save/load
     void Save(const char* a_filename);
     bool Load(const char* a_filename);
