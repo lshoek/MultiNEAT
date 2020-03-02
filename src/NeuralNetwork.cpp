@@ -31,6 +31,7 @@
 
 #include <math.h>
 #include <float.h>
+#include <unordered_map>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -941,11 +942,72 @@ bool NeuralNetwork::Load(std::ifstream& a_DataFile)
 
     return true;
 }
+
 bool NeuralNetwork::Load(const char *a_filename)
 {
     std::ifstream t_DataFile(a_filename);
     return Load(t_DataFile);
 }
 
+std::vector<const Connection*> GetNeuronOutConnections(const std::vector<Connection> &all_connections, int neuron_index)
+{
+    std::vector<const Connection*> out_connections;
+    for (const Connection &connection: all_connections) {
+        if (connection.m_source_neuron_idx == neuron_index) {
+            out_connections.emplace_back(&connection);
+        }
+    }
+
+    return out_connections;
+}
+
+enum NEURON_TYPE {
+    NEURON_INPUT,
+    NEURON_HIDDEN,
+    NEURON_OUTPUT,
+};
+
+unsigned int NodeDepth(const std::vector<Connection> &connections, const std::unordered_map<int, NEURON_TYPE> &type_map, const int neuron_index)
+{
+    if (type_map.at(neuron_index) == NEURON_TYPE::NEURON_OUTPUT)
+        return 0;
+
+    const std::vector<const Connection*> out_connections = GetNeuronOutConnections(connections, neuron_index);
+
+    unsigned int max_distance = 0;
+    for (const Connection *connection: out_connections)
+    {
+        unsigned int distance = NodeDepth(connections, type_map, connection->m_target_neuron_idx);
+        if (distance > max_distance)
+            max_distance = distance;
+    }
+
+    return max_distance + 1;
+}
+
+unsigned int NeuralNetwork::CalculateNetworkDepth() const
+{
+    // index -> type
+    std::unordered_map<int, NEURON_TYPE> type_map;
+
+    // populate type map
+    unsigned int m_neurons_size = m_neurons.size();
+    unsigned int i = 0;
+    for (; i<m_num_inputs; i++)
+        type_map[i] = NEURON_INPUT;
+    for (; i<m_num_inputs + m_num_outputs; i++)
+        type_map[i] = NEURON_OUTPUT;
+    for (; i<m_neurons_size; i++)
+        type_map[i] = NEURON_HIDDEN;
+
+
+    unsigned int max_distance = 0;
+    for (; i<m_num_inputs; i++) {
+        unsigned int distance = NodeDepth(m_connections, type_map, i);
+        if (distance > max_distance)
+            max_distance = distance;
+    }
+    return max_distance;
+}
 
 } // namespace NEAT
