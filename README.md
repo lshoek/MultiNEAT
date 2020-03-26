@@ -19,6 +19,8 @@ GNU Lesser General Public License v3.0
 ### Documentation
 [http://multineat.com/docs.html](http://multineat.com/docs.html)
 
+## Building and installation instructions
+
 #### To install as a cpp library
   ```bash
   $ mkdir build && cd build
