@@ -1002,7 +1002,7 @@ unsigned int NeuralNetwork::CalculateNetworkDepth() const
 
 
     unsigned int max_distance = 0;
-    for (; i<m_num_inputs; i++) {
+    for (i=0; i<m_num_inputs; i++) {
         unsigned int distance = NodeDepth(m_connections, type_map, i);
         if (distance > max_distance)
             max_distance = distance;
