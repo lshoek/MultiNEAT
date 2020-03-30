@@ -279,6 +279,7 @@ BOOST_PYTHON_MODULE(_multineat)
             .def("GetDepth", &Genome::GetDepth)
             .def("CalculateDepth", &Genome::CalculateDepth)
             .def("DerivePhenotypicChanges", &Genome::DerivePhenotypicChanges)
+            .def("IsCompatibleWith", &Genome::IsCompatibleWith)
 
             .def("PrintAllTraits", &Genome::PrintAllTraits)
 
