@@ -150,7 +150,8 @@ namespace NEAT
         // Fraction of individuals to be copied unchanged
         EliteFraction = 0.01;
 
-
+        // Recursion limit for network depth calculations
+        NeuronRecursionLimit = 16384;
 
 
 
