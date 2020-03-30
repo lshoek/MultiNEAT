@@ -353,7 +353,7 @@ void Population::CountOffspring()
         }
     }
 
-    // Now count how many offpring each species should have
+    // Now count how many offspring each species should have
     for(unsigned int i=0; i<m_Species.size(); i++)
     {
         m_Species[i].CountOffspring();
@@ -665,14 +665,14 @@ void Population::Epoch()
     // Perform reproduction for each species
     m_TempSpecies.clear();
     m_TempSpecies = m_Species;
-    for(unsigned int i=0; i<m_TempSpecies.size(); i++)
+    for(auto & m_TempSpecie : m_TempSpecies)
     {
-        m_TempSpecies[i].Clear();
+        m_TempSpecie.Clear();
     }
 
-    for(unsigned int i=0; i<m_Species.size(); i++)
+    for(auto & m_Specie : m_Species)
     {
-        m_Species[i].Reproduce(*this, m_Parameters, m_RNG);
+        m_Specie.Reproduce(*this, m_Parameters, m_RNG);
     }
     m_Species = m_TempSpecies;
 

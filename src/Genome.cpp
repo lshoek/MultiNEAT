@@ -1230,11 +1230,11 @@ namespace NEAT
 
 
     // Returns the absolute distance between this genome and a_G
-    double Genome::CompatibilityDistance(Genome &a_G, Parameters &a_Parameters)
+    double Genome::CompatibilityDistance(Genome &a_G, Parameters &a_Parameters) const
     {
         // iterators for moving through the genomes' genes
-        std::vector<LinkGene>::iterator t_g1;
-        std::vector<LinkGene>::iterator t_g2;
+        std::vector<LinkGene>::const_iterator t_g1;
+        std::vector<LinkGene>::const_iterator t_g2;
 
         // this variable is the total distance between the genomes
         // if it passes beyond the compatibility treshold, the function returns false
@@ -1263,20 +1263,20 @@ namespace NEAT
         int t_max_genome_size = static_cast<int> (NumLinks()   < a_G.NumLinks())   ? (a_G.NumLinks())   : (NumLinks());
         int t_max_neurons     = static_cast<int> (NumNeurons() < a_G.NumNeurons()) ? (a_G.NumNeurons()) : (NumNeurons());
 
-        t_g1 = m_LinkGenes.begin();
-        t_g2 = a_G.m_LinkGenes.begin();
+        t_g1 = m_LinkGenes.cbegin();
+        t_g2 = a_G.m_LinkGenes.cbegin();
 
         // Step through the genes until both genomes end
-        while (!((t_g1 == m_LinkGenes.end()) && ((t_g2 == a_G.m_LinkGenes.end()))))
+        while (!((t_g1 == m_LinkGenes.cend()) && ((t_g2 == a_G.m_LinkGenes.cend()))))
         {
             // end of first genome?
-            if (t_g1 == m_LinkGenes.end())
+            if (t_g1 == m_LinkGenes.cend())
             {
                 // add to the total distance
                 t_num_excess++;
                 t_g2++;
             }
-            else if (t_g2 == a_G.m_LinkGenes.end())
+            else if (t_g2 == a_G.m_LinkGenes.cend())
             // end of second genome?
             {
                 // add to the total distance
@@ -1301,7 +1301,7 @@ namespace NEAT
                     // calculate link trait difference here
                     std::map<std::string, double> link_trait_difference = t_g1->GetTraitDistances(t_g2->m_Traits);
                     // add to the totals
-                    for(auto it = link_trait_difference.begin(); it != link_trait_difference.end(); it++)
+                    for(auto it = link_trait_difference.cbegin(); it != link_trait_difference.cend(); it++)
                     {
                         if (t_total_link_trait_difference.count(it->first) == 0)
                         {
@@ -1367,7 +1367,7 @@ namespace NEAT
                     // calculate and add node trait difference here
                     std::map<std::string, double> neuron_trait_difference = m_NeuronGenes[i].GetTraitDistances( a_G.GetNeuronByID(m_NeuronGenes[i].ID()).m_Traits );
                     // add to the totals
-                    for(auto it = neuron_trait_difference.begin(); it != neuron_trait_difference.end(); it++)
+                    for(auto it = neuron_trait_difference.cbegin(); it != neuron_trait_difference.cend(); it++)
                     {
                         if (t_total_neuron_trait_difference.count(it->first) == 0)
                         {
@@ -1428,7 +1428,7 @@ namespace NEAT
     }
 
     // Returns true if this genome and a_G are compatible (belong in the same species)
-    bool Genome::IsCompatibleWith(Genome &a_G, Parameters &a_Parameters)
+    bool Genome::IsCompatibleWith(Genome &a_G, Parameters &a_Parameters) const
     {
         // full compatibility cases
         if (this == &a_G)
@@ -3381,7 +3381,7 @@ namespace NEAT
     }
 
     // Saves this genome to an already opened file for writing
-    void Genome::Save(FILE *a_file)
+    void Genome::Save(FILE *a_file) const
     {
         fprintf(a_file, "GenomeStart %d\n", GetID());
 
@@ -3408,7 +3408,7 @@ namespace NEAT
         fprintf(a_file, "GenomeEnd\n\n");
     }
     
-    void Genome::PrintTraits(std::map< std::string, Trait>& traits)
+    void Genome::PrintTraits(const std::map< std::string, Trait>& traits) const
     {
         for(auto t = traits.begin(); t != traits.end(); t++)
         {
@@ -3439,7 +3439,7 @@ namespace NEAT
                     // and it has the right value?
                     for(long unsigned int ix=0; ix<t->second.dep_values.size(); ix++)
                     {
-                        if (traits[s].value == (t->second.dep_values[ix]))
+                        if (traits.at(s).value == (t->second.dep_values[ix]))
                         {
                             doit = true;
                             break;
@@ -3481,7 +3481,7 @@ namespace NEAT
         }
     }
 
-    void Genome::PrintAllTraits()
+    void Genome::PrintAllTraits() const
     {
         std::cout << "====================================================================\n";
         std::cout << "Genome:\n"

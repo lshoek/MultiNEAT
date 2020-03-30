@@ -444,10 +444,10 @@ namespace NEAT
         void Save(const char *a_filename);
 
         // Saves this genome to an already opened file for writing
-        void Save(FILE *a_fstream);
+        void Save(FILE *a_fstream) const;
 
-        void PrintTraits(std::map< std::string, Trait>& traits);
-        void PrintAllTraits();
+        void PrintTraits(const std::map< std::string, Trait>& traits) const;
+        void PrintAllTraits() const;
 
         // returns the max neuron ID
         int GetLastNeuronID() const;
@@ -466,10 +466,10 @@ namespace NEAT
         }
 
         // Returns true if this genome and a_G are compatible (belong in the same species)
-        bool IsCompatibleWith(Genome &a_G, Parameters &a_Parameters);
+        bool IsCompatibleWith(Genome &a_G, Parameters &a_Parameters) const;
 
         // returns the absolute compatibility distance between this genome and a_G
-        double CompatibilityDistance(Genome &a_G, Parameters &a_Parameters);
+        double CompatibilityDistance(Genome &a_G, Parameters &a_Parameters) const;
 
         // Calculates the network depth
         void CalculateDepth();
