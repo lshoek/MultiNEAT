@@ -101,8 +101,8 @@ namespace NEAT
         // Make sure it is >= 1.0 to avoid confusion
         YoungAgeFitnessBoost = 1.1;
 
-        // Number of generations without improvement (stagnation) allowed for a species
-        SpeciesMaxStagnation = 50;
+        // Number of generations or evaluations without improvement (stagnation) allowed for a species
+        SpeciesMaxStagnation = 25000;
 
         // Minimum jump in fitness necessary to be considered as improvement.
         // Setting this value to 0.0 makes the system to behave like regular NEAT.
@@ -135,7 +135,7 @@ namespace NEAT
         OverallMutationRate = 0.25;
 
         // Probability for a baby to result from inter-species mating.
-        InterspeciesCrossoverRate = 0.0001;
+        InterspeciesCrossoverRate = 0.0;
 
         // Probability for a baby to result from Multipoint Crossover when mating. 1.0 = 100%
         // The default is the Average mating.
@@ -148,8 +148,7 @@ namespace NEAT
         TournamentSize = 4;
 
         // Fraction of individuals to be copied unchanged
-        EliteFraction = 0.01;
-
+        EliteFraction = 0.000001;
 
 
 
@@ -222,10 +221,10 @@ namespace NEAT
         MutateAddNeuronProb = 0.01;
 
         // Allow splitting of any recurrent links
-        SplitRecurrent = true;
+        SplitRecurrent = false;
 
         // Allow splitting of looped recurrent links
-        SplitLoopedRecurrent = true;
+        SplitLoopedRecurrent = false;
 
         // Maximum number of tries to find a link to split
         NeuronTries = 64;
@@ -244,7 +243,7 @@ namespace NEAT
         MutateRemSimpleNeuronProb = 0.0;
 
         // Maximum number of tries to find 2 neurons to add/remove a link
-        LinkTries = 32;
+        LinkTries = 64;
 
         // Probability that a link mutation will be made recurrent
         RecurrentProb = 0.25;
@@ -368,9 +367,9 @@ namespace NEAT
 
 
         // Trait mutation probabilities
-        MutateNeuronTraitsProb = 1.0;
-        MutateLinkTraitsProb = 1.0;
-        MutateGenomeTraitsProb = 1.0;
+        MutateNeuronTraitsProb = 0.0;
+        MutateLinkTraitsProb = 0.0;
+        MutateGenomeTraitsProb = 0.0;
 
 
         /////////////////////////////
@@ -389,7 +388,7 @@ namespace NEAT
         ExcessCoeff = 1.0;
 
         // Average weight difference importance
-        WeightDiffCoeff = 0.5;
+        WeightDiffCoeff = 0.0;
 
         // Node-specific activation parameter A difference importance
         ActivationADiffCoeff = 0.0;
@@ -407,13 +406,13 @@ namespace NEAT
         ActivationFunctionDiffCoeff = 0.0;
 
         // Compatibility treshold
-        CompatTreshold = 5.0;
+        CompatTreshold = 3.0;
 
         // Minumal value of the compatibility treshold
-        MinCompatTreshold = 0.2;
+        MinCompatTreshold = 0.0;
 
         // Modifier per generation for keeping the species stable
-        CompatTresholdModifier = 0.3;
+        CompatTresholdModifier = 0.1;
 
         // Per how many generations to change the treshold
         // (used in generational mode)
@@ -421,7 +420,7 @@ namespace NEAT
 
         // Per how many evaluations to change the treshold
         // (used in steady state mode)
-        CompatTreshChangeInterval_Evaluations = 10;
+        CompatTreshChangeInterval_Evaluations = 1;
 
 
 

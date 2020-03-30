@@ -279,6 +279,7 @@ BOOST_PYTHON_MODULE(_multineat)
             .def("GetDepth", &Genome::GetDepth)
             .def("CalculateDepth", &Genome::CalculateDepth)
             .def("DerivePhenotypicChanges", &Genome::DerivePhenotypicChanges)
+            .def("CompatibilityDistance", &Genome::CompatibilityDistance)
             .def("IsCompatibleWith", &Genome::IsCompatibleWith)
 
             .def("PrintAllTraits", &Genome::PrintAllTraits)
@@ -329,6 +330,8 @@ BOOST_PYTHON_MODULE(_multineat)
             .def_readonly("Red", &Species::m_R)
             .def_readonly("Green", &Species::m_G)
             .def_readonly("Blue", &Species::m_B)
+            .def_readwrite("EvalsNoImprovement", &Species::m_EvalsNoImprovement)
+            .def_readwrite("BestFitness", &Species::m_BestFitness)
             ;
 
 ///////////////////////////////////////////////////////////////////
@@ -412,6 +415,9 @@ BOOST_PYTHON_MODULE(_multineat)
             .def_readwrite("Species", &Population::m_Species)
             .def_readwrite("Parameters", &Population::m_Parameters)
             .def_readwrite("RNG", &Population::m_RNG)
+            .def_readwrite("ID", &Population::m_ID)
+
+            .def_pickle(Population_pickle_suite())
             ;
 
     class_<Innovation>("Innovation", init<int, InnovationType, int, int, NeuronType, int>())

@@ -31,7 +31,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <vector>
-#include <float.h>
+#include <sstream>
+#include <cfloat>
+#ifdef USE_BOOST_PYTHON
+#include <boost/python/object/pickle_support.hpp>
+#include <boost/python/object.hpp>
+#endif
 
 #include "Innovation.h"
 #include "Genome.h"
@@ -137,6 +142,8 @@ public:
     // The list of species
     std::vector<Species> m_Species;
 
+    int m_ID;
+
 
     ////////////////////////////
     // Constructors
@@ -150,7 +157,7 @@ public:
 
 
     // Loads a population from a file.
-    Population(const char* a_FileName);
+    Population(const std::string &a_FileName);
 
     ////////////////////////////
     // Destructor
@@ -212,6 +219,31 @@ public:
     void IncrementNextGenomeID() { m_NextGenomeID++; }
     void IncrementNextSpeciesID() { m_NextSpeciesID++; }
 
+    // Make sure no same genome IDs exist in the population
+    void SameGenomeIDCheck() const
+    {
+        // count how much each ID found has occurred
+        std::map<int, int> ids;
+        for(const Species & specie : m_Species)
+            for(const Genome & individual: specie.m_Individuals)
+                ids[individual.GetID()] = 0;
+
+        for(const Species & specie : m_Species)
+            for(const Genome & individual: specie.m_Individuals)
+                ids[individual.GetID()] += 1;
+
+        for(auto id: ids)
+        {
+            if (id.second > 1)
+            {
+                std::ostringstream error_message;
+                error_message << "Genome ID " << id.first << " appears " << id.second
+                << " times in the population" << std::endl;
+                throw std::runtime_error(error_message.str());
+            }
+        }
+    }
+
     Genome& AccessGenomeByIndex(unsigned int const a_idx);
     Genome& AccessGenomeByID(unsigned int const a_id);
 
@@ -248,6 +280,8 @@ public:
     // Removes worst member of the whole population that has been around for a minimum amount of time
     // returns the genome that was just deleted (may be useful)
     Genome RemoveWorstIndividual();
+
+    void ClearEmptySpecies();
 
     // The main reaitime tick. Analog to Epoch(). Replaces the worst evaluated individual with a new one.
     // Returns a pointer to the new baby.
@@ -287,7 +321,63 @@ public:
     // counters for archive stagnation
     unsigned int m_GensSinceLastArchiving;
     unsigned int m_QuickAddCounter;
+
+    // Serialization
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        ar & m_InnovationDatabase;
+        ar & m_NextGenomeID;
+        ar & m_NextSpeciesID;
+        ar & m_SearchMode;
+        ar & m_CurrentMPC;
+        ar & m_OldMPC;
+        ar & m_BaseMPC;
+        ar & m_BestFitnessEver;
+        ar & m_BestGenome;
+        ar & m_BestGenomeEver;
+        ar & m_GensSinceBestFitnessLastChanged;
+        ar & m_EvalsSinceBestFitnessLastChanged;
+        ar & m_GensSinceMPCLastChanged;
+        ar & m_Genomes;
+        ar & m_GenomeArchive;
+        //ar & m_RNG;
+        ar & m_Parameters;
+        ar & m_Generation;
+        ar & m_Species;
+        ar & m_NumEvaluations;
+        ar & m_GensSinceLastArchiving;
+        ar & m_QuickAddCounter;
+        ar & m_ID;
+
+        //ar & m_TempSpecies;
+        //ar & m_BehaviorArchive;
+    }
 };
+
+#ifdef USE_BOOST_PYTHON
+struct Population_pickle_suite : py::pickle_suite
+{
+    static py::object getstate(const Population& a)
+    {
+        std::ostringstream os;
+        boost::archive::text_oarchive oa(os);
+        oa << a;
+        return py::str(os.str());
+    }
+
+    static void setstate(Population &a, py::object entries)
+    {
+        py::str s = py::extract<py::str> (entries)();
+        std::string st = py::extract<std::string>(s)();
+        std::istringstream is (st);
+
+        boost::archive::text_iarchive ia (is);
+        ia >> a;
+    }
+};
+#endif
 
 } // namespace NEAT
 

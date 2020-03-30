@@ -160,7 +160,7 @@ public:
     // Probability for a baby to result from inter-species mating.
     double InterspeciesCrossoverRate;
 
-    // Probability for a baby to result from Multipoint Crossover when mating. 1.0 = 100%
+    // Probability for a baby gene to result from Multipoint Crossover when mating. 1.0 = 100%
     // The default if the Average mating.
     double MultipointCrossoverRate;
 
@@ -621,6 +621,11 @@ public:
             py::object itp = py::extract<py::object>(trait_params["details"]);
             t.m_Details = itp;
         }
+        else if (t.type == "pyclassset")
+        {
+            py::object itp = py::extract<py::object>(trait_params["details"]);
+            t.m_Details = itp;
+        }
 
         return t;
     }
@@ -641,7 +646,7 @@ public:
             dt["mut_power"] = bs::get<IntTraitParameters>(pms.m_Details).mut_power;
             dt["mut_replace_prob"] = bs::get<IntTraitParameters>(pms.m_Details).mut_replace_prob;
         }
-        if (pms.type == "float")
+        else if (pms.type == "float")
         {
             dt = py::dict();
 
@@ -651,7 +656,7 @@ public:
             dt["mut_power"] = bs::get<FloatTraitParameters>(pms.m_Details).mut_power;
             dt["mut_replace_prob"] = bs::get<FloatTraitParameters>(pms.m_Details).mut_replace_prob;
         }
-        if (pms.type == "str")
+        else if (pms.type == "str")
         {
             dt = py::dict();
 
@@ -668,7 +673,7 @@ public:
             dt["set"] = set;
             dt["probs"] = probs;
         }
-        if (pms.type == "intset")
+        else if (pms.type == "intset")
         {
             dt = py::dict();
 
@@ -685,7 +690,7 @@ public:
             dt["set"] = set;
             dt["probs"] = probs;
         }
-        if (pms.type == "floatset")
+        else if (pms.type == "floatset")
         {
             dt = py::dict();
 
@@ -702,9 +707,14 @@ public:
             dt["set"] = set;
             dt["probs"] = probs;
         }
-        if (pms.type == "pyobject")
+        else if (pms.type == "pyobject")
         {
             t["type"] = "pyobject";
+            dt = bs::get<py::object>(pms.m_Details);
+        }
+        else if (pms.type == "pyclassset")
+        {
+            t["type"] = "pyclassset";
             dt = bs::get<py::object>(pms.m_Details);
         }
 

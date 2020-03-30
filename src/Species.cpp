@@ -64,7 +64,6 @@ namespace NEAT
         //m_Individuals.reserve(50); wtf is this?
         // copy the initializing genome locally.
         // it is now the representative of the species.
-        m_Representative = a_Genome;
         m_BestGenome = a_Genome;
 
         // add the first and only one individual
@@ -93,7 +92,6 @@ namespace NEAT
         if (this != &a_S)
         {
             m_ID = a_S.m_ID;
-            m_Representative = a_S.m_Representative;
             m_BestGenome = a_S.m_BestGenome;
             m_BestSpecies = a_S.m_BestSpecies;
             m_WorstSpecies = a_S.m_WorstSpecies;
@@ -113,9 +111,9 @@ namespace NEAT
 
 
     // adds a new member to the species and updates variables
-    void Species::AddIndividual(Genome &a_Genome)
+    void Species::AddIndividual(const Genome &a_Genome)
     {
-        m_Individuals.push_back(a_Genome);
+        m_Individuals.emplace_back(a_Genome);
     }
 
 
@@ -126,10 +124,10 @@ namespace NEAT
 
         // Make a pool of only evaluated individuals!
         std::vector<Genome> t_Evaluated;
-        for (unsigned int i = 0; i < m_Individuals.size(); i++)
+        for (const Genome & m_Individual : m_Individuals)
         {
-            if (m_Individuals[i].IsEvaluated())
-                t_Evaluated.push_back(m_Individuals[i]);
+            if (m_Individual.IsEvaluated())
+                t_Evaluated.push_back(m_Individual);
         }
 
         ASSERT(t_Evaluated.size() > 0);
@@ -195,9 +193,15 @@ namespace NEAT
     // returns a completely random individual
     Genome Species::GetRandomIndividual(RNG &a_RNG) const
     {
-        if (m_Individuals.size() == 0) // no members yet, return representative
+        if (BOOST_UNLIKELY(m_Individuals.empty())) // no members yet, return representative
         {
-            return m_Representative;
+            std::ostringstream error_message;
+            error_message << "Attempted GetRandomIndividual() but no individuals in species ID " << m_ID << std::endl;
+            throw std::runtime_error(error_message.str());
+        }
+        else if (m_Individuals.size() == 1)
+        {
+            return m_Individuals[1];
         }
         else
         {
@@ -213,14 +217,16 @@ namespace NEAT
         // Don't store the leader any more
         // Perform a search over the members and return the most fit member
 
-        // if empty, return representative
-        if (m_Individuals.size() == 0)
+        // if empty, throw exception
+        if (BOOST_UNLIKELY(m_Individuals.empty()))
         {
-            return m_Representative;
+            std::ostringstream error_message;
+            error_message << "Attempted GetLeader() but no individuals in species ID " << m_ID << std::endl;
+            throw std::runtime_error(error_message.str());
         }
 
-        double t_max_fitness = -99999999;
-        int t_leader_idx = -1;
+        double t_max_fitness = std::numeric_limits<double>::min();
+        unsigned int t_leader_idx = 0;
         for (unsigned int i = 0; i < m_Individuals.size(); i++)
         {
             double t_f = m_Individuals[i].GetFitness();
@@ -231,14 +237,20 @@ namespace NEAT
             }
         }
 
-        ASSERT(t_leader_idx != -1);
         return (m_Individuals[t_leader_idx]);
     }
 
 
     Genome Species::GetRepresentative() const
     {
-        return m_Representative;
+        if (BOOST_UNLIKELY(m_Individuals.empty()))
+        {
+            std::ostringstream error_message;
+            error_message << "Attempted GetRepresentative() but no individuals in species ID " << m_ID << std::endl;
+            throw std::runtime_error(error_message.str());
+        }
+
+        return m_Individuals[0];
     }
 
     // calculates how many offspring this species should spawn
@@ -246,9 +258,9 @@ namespace NEAT
     {
         m_OffspringRqd = 0;
 
-        for (unsigned int i = 0; i < m_Individuals.size(); i++)
+        for (auto & m_Individual : m_Individuals)
         {
-            m_OffspringRqd += m_Individuals[i].GetOffspringAmount();
+            m_OffspringRqd += m_Individual.GetOffspringAmount();
         }
     }
 
@@ -266,10 +278,14 @@ namespace NEAT
 
             // the fitness must be positive
             //DBG(t_fitness);
-            ASSERT(t_fitness >= 0);
+            ASSERT(t_fitness >= 0.0);
 
             // this prevents the fitness to be below zero
-            if (t_fitness <= 0) t_fitness = 0.0001;
+            if (t_fitness <= 0.0) t_fitness = 0.0000000001;
+
+            // this prevents nan or infinity to be fitness
+            if (std::isnan(t_fitness)) t_fitness = 0.0000000001;
+            if (std::isinf(t_fitness)) t_fitness = 0.0000000001;
 
             // update the best fitness and stagnation counter
             if (t_fitness > m_BestFitness)
@@ -303,8 +319,12 @@ namespace NEAT
                 }
             }
 
+            unsigned int ms = m_Individuals.size();
+            ASSERT(ms > 0);
+            if (ms == 0) ms = 1;
+
             // Compute the adjusted fitness for this member
-            m_Individuals[i].SetAdjFitness(t_fitness / m_Individuals.size());
+            m_Individuals[i].SetAdjFitness(t_fitness / (double)(ms));
         }
     }
 
@@ -315,7 +335,7 @@ namespace NEAT
     }
 
 
-// Removes an individual from the species by its index within the species
+    // Removes an individual from the species by its index within the species
     void Species::RemoveIndividual(unsigned int a_idx)
     {
         ASSERT(a_idx < m_Individuals.size());
@@ -331,14 +351,14 @@ namespace NEAT
     {
         Genome t_baby; // temp genome for reproduction
 
-        int t_offspring_count = Rounded(GetOffspringRqd());
-        int elite_offspring = Rounded(a_Parameters.EliteFraction * m_Individuals.size());
+        unsigned int t_offspring_count = Rounded(GetOffspringRqd());
+        unsigned int elite_offspring = Rounded(a_Parameters.EliteFraction * m_Individuals.size());
         if (elite_offspring < 1) // can't be 0
         {
             elite_offspring = 1;
         }
         // ensure we have a champ
-        int elite_count = 0;
+        unsigned int elite_count = 0;
         // no offspring?! yikes.. dead species!
         if (t_offspring_count == 0)
         {
@@ -460,12 +480,12 @@ namespace NEAT
                     // Unless of course, we want clones to exist
                     if (!a_Parameters.AllowClones)
                     {
-                        for (unsigned int i = 0; i < a_Pop.m_TempSpecies.size(); i++)
+                        for (const Species & tmpSpecies : a_Pop.m_TempSpecies)
                         {
-                            for (unsigned int j = 0; j < a_Pop.m_TempSpecies[i].m_Individuals.size(); j++)
+                            for (const Genome & individual : tmpSpecies.m_Individuals)
                             {
                                 if (
-                                        (t_baby.CompatibilityDistance(a_Pop.m_TempSpecies[i].m_Individuals[j],
+                                        (t_baby.CompatibilityDistance(individual,
                                                                       a_Parameters) < COMPAT_EQUALITY_DELTA) // identical genome?
                                         )
                                 {
@@ -532,12 +552,13 @@ namespace NEAT
             if (t_cur_species == a_Pop.m_TempSpecies.end())
             {
                 // create the first species and place the baby there
-                a_Pop.m_TempSpecies.push_back(Species(t_baby, a_Pop.GetNextSpeciesID()));
+                a_Pop.m_TempSpecies.emplace_back(t_baby, a_Pop.GetNextSpeciesID());
                 a_Pop.IncrementNextSpeciesID();
             }
             else
             {
                 // try to find a compatible species
+
                 Genome t_to_compare = t_cur_species->GetRepresentative();
 
                 t_found = false;
@@ -563,7 +584,7 @@ namespace NEAT
                 // if couldn't find a match, make a new species
                 if (!t_found)
                 {
-                    a_Pop.m_TempSpecies.push_back(Species(t_baby, a_Pop.GetNextSpeciesID()));
+                    a_Pop.m_TempSpecies.emplace_back(t_baby, a_Pop.GetNextSpeciesID());
                     a_Pop.IncrementNextSpeciesID();
                 }
             }

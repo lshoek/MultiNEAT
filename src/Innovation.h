@@ -82,14 +82,20 @@ public:
     // Constructors
     ////////////////////////////
     Innovation(int a_ID, InnovationType a_InnovType, int a_From, int a_To, NeuronType a_NType, int a_NID)
-    {
-        m_ID           = a_ID;
-        m_InnovType    = a_InnovType;
-        m_FromNeuronID = a_From;
-        m_ToNeuronID = a_To;
-        m_NeuronType = a_NType;
-        m_NeuronID   = a_NID;
-    }
+        : m_ID(a_ID)
+        , m_InnovType(a_InnovType)
+        , m_FromNeuronID(a_From)
+        , m_ToNeuronID(a_To)
+        , m_NeuronType(a_NType)
+        , m_NeuronID(a_NID)
+    {}
+
+    Innovation()
+        : m_ID(0)
+        , m_FromNeuronID(0)
+        , m_ToNeuronID(0)
+        , m_NeuronID(0)
+    {}
 
     ////////////////////////////
     // Destructor
@@ -123,6 +129,19 @@ public:
     NeuronType GetNeuronType() const
     {
         return m_NeuronType;
+    }
+
+    // Serialization
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        ar & m_ID;
+        ar & m_InnovType;
+        ar & m_FromNeuronID;
+        ar & m_ToNeuronID;
+        ar & m_NeuronType;
+        ar & m_NeuronID;
     }
 };
 
@@ -212,6 +231,16 @@ public:
 
     // Saves the database to an already opened file
     void Save(FILE* a_file);
+
+    // Serialization
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        ar & m_NextNeuronID;
+        ar & m_NextInnovationNum;
+        ar & m_Innovations;
+    }
 };
 
 
