@@ -46,6 +46,17 @@ class Population;
 // The Species class
 //////////////////////////////////////////////
 
+enum SelectionMode
+{
+    TRUNCATION,
+    ROULETTE,
+    RANK_LINEAR,
+    RANK_EXP,
+    TOURNAMENT,
+    STOCHASTIC,
+    BOLTZMANN
+};
+
 class Species
 {
 
@@ -57,9 +68,6 @@ private:
 
     // ID of the species
     int m_ID;
-
-    // Keep a local copy of the representative
-    Genome m_Representative;
 
     // This tell us if this is the best species in the population
     bool m_BestSpecies;
@@ -98,6 +106,21 @@ public:
     ////////////////////////////
     // Constructors
     ////////////////////////////
+
+    Species()
+        : m_ID(0)
+        , m_BestSpecies(false)
+        , m_WorstSpecies(false)
+        , m_OffspringRqd(0)
+        , m_AgeGenerations(0)
+        , m_AgeEvaluations(0)
+        , m_BestFitness(0)
+        , m_GensNoImprovement(0)
+        , m_EvalsNoImprovement(0)
+        , m_R(0), m_G(0), m_B(0)
+        //, m_SelectionMode(SelectionMode::TRUNCATION)
+        //, AlwaysTruncate(false)
+    {}
 
     // initializes a species with a leader genome and an ID number
     Species(const Genome& a_Seed, int a_id);
@@ -139,7 +162,6 @@ public:
     Genome GetIndividualByIdx(int a_idx) const { return (m_Individuals[a_idx]); }
     bool IsBestSpecies() const { return m_BestSpecies; }
     bool IsWorstSpecies() const { return m_WorstSpecies; }
-    void SetRepresentative(Genome& a_G) { m_Representative = a_G; }
 
     // returns the leader (the member having the best fitness, representing the species)
     Genome GetLeader() const;
@@ -147,7 +169,7 @@ public:
     Genome GetRepresentative() const;
 
     // adds a new member to the species and updates variables
-    void AddIndividual(Genome& a_New);
+    void AddIndividual(const Genome &a_New);
 
     // returns an individual randomly selected from the best N%
     Genome GetIndividual(Parameters& a_Parameters, RNG& a_RNG) const;
@@ -200,6 +222,28 @@ public:
     Genome ReproduceOne(Population& a_Pop, Parameters& a_Parameters, RNG& a_RNG);
 
     void RemoveIndividual(unsigned int a_idx);
+
+    // Serialization
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        ar & m_ID;
+        ar & m_BestSpecies;
+        ar & m_WorstSpecies;
+        ar & m_AgeGenerations;
+        ar & m_AgeEvaluations;
+        ar & m_OffspringRqd;
+        ar & m_BestFitness;
+        ar & m_BestGenome;
+        ar & m_GensNoImprovement;
+        ar & m_EvalsNoImprovement;
+        ar & m_R;
+        ar & m_G;
+        ar & m_B;
+        ar & m_Individuals;
+        ar & m_AverageFitness;
+    }
 };
 
 } // namespace NEAT

@@ -1245,7 +1245,7 @@ namespace NEAT
 
 
     // Returns the absolute distance between this genome and a_G
-    double Genome::CompatibilityDistance(Genome &a_G, Parameters &a_Parameters) const
+    double Genome::CompatibilityDistance(const Genome &a_G, const Parameters &a_Parameters) const
     {
         // iterators for moving through the genomes' genes
         std::vector<LinkGene>::const_iterator t_g1;
@@ -1426,24 +1426,24 @@ namespace NEAT
                 (a_Parameters.ActivationFunctionDiffCoeff * (t_total_num_activation_difference / t_num_matching_neurons));
 
         // add trait differences according to each one's coeff
-        for(auto it = t_total_link_trait_difference.begin(); it != t_total_link_trait_difference.end(); it++)
+        for(auto & it : t_total_link_trait_difference)
         {
-            t_total_distance += ((a_Parameters.LinkTraits)[it->first].m_ImportanceCoeff * it->second) / t_num_matching_links;
+            t_total_distance += (a_Parameters.LinkTraits.at(it.first).m_ImportanceCoeff * it.second) / t_num_matching_links;
         }
-        for(auto it = t_total_neuron_trait_difference.begin(); it != t_total_neuron_trait_difference.end(); it++)
+        for(auto & it : t_total_neuron_trait_difference)
         {
-            t_total_distance += ((a_Parameters.NeuronTraits)[it->first].m_ImportanceCoeff * it->second) / t_num_matching_neurons;
+            t_total_distance += (a_Parameters.NeuronTraits.at(it.first).m_ImportanceCoeff * it.second) / t_num_matching_neurons;
         }
-        for(auto it = t_genome_link_trait_difference.begin(); it != t_genome_link_trait_difference.end(); it++)
+        for(auto & it : t_genome_link_trait_difference)
         {
-            t_total_distance += ((a_Parameters.GenomeTraits)[it->first].m_ImportanceCoeff * it->second);
+            t_total_distance += (a_Parameters.GenomeTraits.at(it.first).m_ImportanceCoeff * it.second);
         }
 
         return t_total_distance;
     }
 
     // Returns true if this genome and a_G are compatible (belong in the same species)
-    bool Genome::IsCompatibleWith(Genome &a_G, Parameters &a_Parameters) const
+    bool Genome::IsCompatibleWith(const Genome &a_G, const Parameters &a_Parameters) const
     {
         // full compatibility cases
         if (this == &a_G)
@@ -4484,5 +4484,121 @@ namespace NEAT
             }
         }
     }
+
+#ifdef USE_BOOST_PYTHON
+    py::dict Genome::TraitMap2Dict(const std::map< std::string, Trait>& tmap) const
+    {
+        py::dict traits;
+        for(auto tit=tmap.begin(); tit!=tmap.end(); tit++)
+        {
+            bool doit = false;
+            if (tit->second.dep_key != "")
+            {
+                // there is such trait..
+                if (tmap.count(tit->second.dep_key) != 0)
+                {
+                    // and it has the right value?
+                    for(long unsigned int ix=0; ix < tit->second.dep_values.size(); ix++)
+                    {
+                        if (tmap.at(tit->second.dep_key).value == tit->second.dep_values[ix])
+                        {
+                            doit = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                doit = true;
+            }
+
+            if (doit)
+            {
+                TraitType t = tit->second.value;
+                if (t.type() == typeid(int))
+                {
+                    traits[tit->first] = bs::get<int>(t);
+                }
+                if (t.type() == typeid(double))
+                {
+                    traits[tit->first] = bs::get<double>(t);
+                }
+                if (t.type() == typeid(std::string))
+                {
+                    traits[tit->first] = bs::get<std::string>(t);
+                }
+                if (t.type() == typeid(intsetelement))
+                {
+                    traits[tit->first] = (bs::get<intsetelement>(t)).value;
+                }
+                if (t.type() == typeid(floatsetelement))
+                {
+                    traits[tit->first] = (bs::get<floatsetelement>(t)).value;
+                }
+                if (t.type() == typeid(py::object))
+                {
+                    traits[tit->first] = bs::get<py::object>(t);
+                }
+            }
+        }
+
+        return traits;
+    }
+
+    py::object Genome::GetNeuronTraits() const
+    {
+        py::list neurons;
+        for(auto it=m_NeuronGenes.begin(); it != m_NeuronGenes.end(); it++)
+        {
+
+            py::dict traits = TraitMap2Dict((*it).m_Traits);
+
+            py::list little;
+            little.append( (*it).ID() );
+
+            if ((*it).Type() == INPUT)
+            {
+                little.append( "input" );
+            }
+            else if ((*it).Type() == BIAS)
+            {
+                little.append( "bias" );
+            }
+            else if ((*it).Type() == HIDDEN)
+            {
+                little.append( "hidden" );
+            }
+            else if ((*it).Type() == OUTPUT)
+            {
+                little.append( "output" );
+            }
+            little.append( traits );
+            neurons.append( little );
+        }
+
+        return neurons;
+    }
+
+    py::object Genome::GetLinkTraits(bool with_weights) const
+    {
+        py::list links;
+    //            for(auto it=m_LinkGenes.begin(); it != m_LinkGenes.end(); it++)
+        for(const LinkGene &linkGene: m_LinkGenes)
+        {
+            py::dict traits = TraitMap2Dict(linkGene.m_Traits);
+
+            py::list little;
+            little.append(linkGene.FromNeuronID());
+            little.append(linkGene.ToNeuronID());
+            little.append(traits);
+            if (with_weights)
+                little.append(linkGene.m_Weight);
+            links.append(little);
+        }
+
+        return links;
+    }
+#endif
 
 } // namespace NEAT

@@ -329,116 +329,11 @@ namespace NEAT
 
 #ifdef USE_BOOST_PYTHON
 
-        py::dict TraitMap2Dict(std::map< std::string, Trait>& tmap)
-        {
-            py::dict traits;
-            for(auto tit=tmap.begin(); tit!=tmap.end(); tit++)
-            {
-                bool doit = false;
-                if (tit->second.dep_key != "")
-                {
-                    // there is such trait..
-                    if (tmap.count(tit->second.dep_key) != 0)
-                    {
-                        // and it has the right value?
-                        for(long unsigned int ix=0; ix < tit->second.dep_values.size(); ix++)
-                        {
-                            if (tmap[tit->second.dep_key].value == tit->second.dep_values[ix])
-                            {
-                                doit = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    doit = true;
-                }
+        py::dict TraitMap2Dict(const std::map< std::string, Trait>& tmap) const;
 
-                if (doit)
-                {
-                    TraitType t = tit->second.value;
-                    if (t.type() == typeid(int))
-                    {
-                        traits[tit->first] = bs::get<int>(t);
-                    }
-                    if (t.type() == typeid(double))
-                    {
-                        traits[tit->first] = bs::get<double>(t);
-                    }
-                    if (t.type() == typeid(std::string))
-                    {
-                        traits[tit->first] = bs::get<std::string>(t);
-                    }
-                    if (t.type() == typeid(intsetelement))
-                    {
-                        traits[tit->first] = (bs::get<intsetelement>(t)).value;
-                    }
-                    if (t.type() == typeid(floatsetelement))
-                    {
-                        traits[tit->first] = (bs::get<floatsetelement>(t)).value;
-                    }
-                    if (t.type() == typeid(py::object))
-                    {
-                        traits[tit->first] = bs::get<py::object>(t);
-                    }
-                }
-            }
+        py::object GetNeuronTraits() const;
 
-            return traits;
-        }
-
-        py::object GetNeuronTraits()
-        {
-            py::list neurons;
-            for(auto it=m_NeuronGenes.begin(); it != m_NeuronGenes.end(); it++)
-            {
-
-                py::dict traits = TraitMap2Dict((*it).m_Traits);
-
-                py::list little;
-                little.append( (*it).ID() );
-
-                if ((*it).Type() == INPUT)
-                {
-                    little.append( "input" );
-                }
-                else if ((*it).Type() == BIAS)
-                {
-                    little.append( "bias" );
-                }
-                else if ((*it).Type() == HIDDEN)
-                {
-                    little.append( "hidden" );
-                }
-                else if ((*it).Type() == OUTPUT)
-                {
-                    little.append( "output" );
-                }
-                little.append( traits );
-                neurons.append( little );
-            }
-
-            return neurons;
-        }
-
-        py::object GetLinkTraits()
-        {
-            py::list links;
-            for(auto it=m_LinkGenes.begin(); it != m_LinkGenes.end(); it++)
-            {
-                py::dict traits = TraitMap2Dict((*it).m_Traits);
-
-                py::list little;
-                little.append( (*it).FromNeuronID() );
-                little.append( (*it).ToNeuronID() );
-                little.append( traits );
-                links.append( little );
-            }
-
-            return links;
-        }
+        py::object GetLinkTraits(bool with_weights=false) const;
 
         py::dict GetGenomeTraits()
         {
@@ -473,10 +368,10 @@ namespace NEAT
         }
 
         // Returns true if this genome and a_G are compatible (belong in the same species)
-        bool IsCompatibleWith(Genome &a_G, Parameters &a_Parameters) const;
+        bool IsCompatibleWith(const Genome &a_G, const Parameters &a_Parameters) const;
 
         // returns the absolute compatibility distance between this genome and a_G
-        double CompatibilityDistance(Genome &a_G, Parameters &a_Parameters) const;
+        double CompatibilityDistance(const Genome &a_G, const Parameters &a_Parameters) const;
 
         // Calculates the network depth
         void CalculateDepth();

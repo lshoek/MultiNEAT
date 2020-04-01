@@ -160,6 +160,6 @@ BOOST_AUTO_TEST_CASE(multineat_xor)
     std::cout << "best fitness: " << best_fitness << std::endl;
 
     BOOST_TEST(best_fitness == bestf);
-    BOOST_TEST(best_fitness > -1e-5);
+    BOOST_TEST(best_fitness > -1.2e-5);
     BOOST_TEST(best_fitness < 0);
 }
