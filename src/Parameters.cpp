@@ -508,6 +508,7 @@ namespace NEAT
         , RouletteWheelSelection(false)
         , TournamentSize(4)
         , EliteFraction(0.01)
+        , NeuronRecursionLimit(16384)
         // Phased Search parameters
         , PhasedSearching(false)
         , DeltaCoding(false)
@@ -1073,6 +1074,10 @@ namespace NEAT
             if (s == "Elitism")
             {
                 a_DataFile >> EliteFraction;
+            }
+            if (s == "NeuronRecursionLimit")
+            {
+                a_DataFile >> NeuronRecursionLimit;
             }
         }
 
